@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,65 +8,43 @@ namespace Isas_Pizza
 {
     public class Ingrediente
     {
-        private DateTime _fechaVencimiento;
+        public string nombre {get;}
+        public DateTime fechaVencimiento {get;}
+        public double peso {get;}
+        public string descripcion {get;}
 
-        public DateTime FechaVencimiento { 
-            get => _fechaVencimiento;
-            set
-            {
-                if (value >= DateTime.Today)
-                {
-                    _fechaVencimiento = value;
-                }
-                else
-                {
-                    _fechaVencimiento = DateTime.Today;
-                }
-            }
-        }
-        private String _nombre;
-
-        public String Nombre { 
-            get => _nombre;
-            set {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    // Convierte la primera letra a mayúscula y el resto a minúscula
-                    _nombre = char.ToUpper(value[0]) + value.Substring(1).ToLower();
-                }
-                else
-                {
-                    _nombre = "N/A";
-                }
-            }
-        }
-        
-        public double Peso;
-        public String Descripcion;
-
-        public enum Estado
+        public static void ValidateArgs(string nombre,
+                                        DateTime fechaVencimiento,
+                                        double peso,
+                                        string descripcion)
         {
-            Principal,
-            Secundario,
-            Decorativo
+            if (string.IsNullOrEmpty(nombre))
+                throw new ArgumentException(
+                    "Nombre del ingrediente no puede ser nulo",
+                    nameof(nombre)
+                );
+            if (fechaVencimiento < DateTime.Today)
+                throw new ArgumentOutOfRangeException(
+                    nameof(fechaVencimiento),
+                    "La fecha de vencimiento no puede estar en el pasado"
+                );
+            if (peso <= 0.0)
+                throw new ArgumentOutOfRangeException(
+                    nameof(peso),
+                    "El peso debe de ser un valor positivo"
+                );
         }
 
-        public Estado Estado_;
-
-        public Ingrediente()
+        public Ingrediente(string nombre,
+                           DateTime fechaVencimiento,
+                           double peso,
+                           string descripcion)
         {
-            Nombre = "";
-            Peso = 1;
-            Descripcion = "";
-            FechaVencimiento= DateTime.Today;
-            Estado_ = Estado.Secundario;
-        }
-       
-       
-        public string Imprimirse()
-        {
-            return "-> Nombre " + Nombre + " | Peso " + Peso + " | Estado " + Estado_+ " | Fecha Vencimiento "+ FechaVencimiento.ToString("dd MMMM yyyy") +
-                "\nDescripcion: " + Descripcion;
+            ValidateArgs(nombre, fechaVencimiento, peso, descripcion);
+            this.nombre = nombre;
+            this.fechaVencimiento = fechaVencimiento;
+            this.peso = peso;
+            this.descripcion = descripcion;
         }
     }
 }
