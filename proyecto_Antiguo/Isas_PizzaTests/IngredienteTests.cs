@@ -6,6 +6,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Isas_PizzaTests
 {
+    /// <summary>
+    /// Pruebas para clases relacionadas con Ingrediente
+    /// </summary>
     public class IngredienteTests 
     {
         private readonly ITestOutputHelper output;
@@ -18,6 +21,10 @@ namespace Isas_PizzaTests
         private readonly TimeSpan timediff = new TimeSpan(20, 0, 0, 0, 0);
 
 
+        /// \test
+        /// <summary>
+        /// Probar si las unidades se convierten a string correctamente.
+        /// </summary>
         [Theory]
         [InlineData(Unidad.UNIDAD, true, "unidad")]
         [InlineData(Unidad.UNIDAD, false, "unidades")]
@@ -32,6 +39,10 @@ namespace Isas_PizzaTests
                                                      string expected)
             => Assert.Equal(expected, unidad.GetString(singular));
 
+        /// \test
+        /// <summary>
+        /// Probar que un nombre vacío dispare un error de validación.
+        /// </summary>
         [Fact]
         public void ValidacionNombreVacioFalla()
         {
@@ -57,6 +68,10 @@ namespace Isas_PizzaTests
             Assert.False(isValid);
         }
 
+        /// \test
+        /// <summary>
+        /// Probar que un nombre no vacío pasa la validación.
+        /// </summary>
         [Fact]
         public void ValidacionNombreLlenoPasa()
         {
@@ -79,6 +94,11 @@ namespace Isas_PizzaTests
             Assert.True(isValid);
         }
         
+        /// \test
+        /// <summary>
+        /// Probar que una cantidad negativa en IngredienteCantidad
+        /// dispare error de validación.
+        /// </summary>
         [Fact]
         public void ValidacionIngredienteCantidadNegativaFalla()
         {
@@ -107,6 +127,11 @@ namespace Isas_PizzaTests
             Assert.False(isValid);
         }
 
+       /// \test 
+        /// <summary>
+        /// Probar que una cantidad positiva en IngredienteCantidad
+        /// pase la validación.
+        /// </summary>
         [Fact]
         public void ValidacionIngredienteCantidadPositivaPasa()
         {
@@ -133,6 +158,11 @@ namespace Isas_PizzaTests
             Assert.True(isValid);
         }
 
+       /// \test 
+        /// <summary>
+        /// Probar que un IngredienteCantidad medido en UNIDAD con una
+        /// cantidad decimal dispare error de validación.
+        /// </summary>
         [Fact]
         public void ValidacionIngredienteUnidadesDecimalesFallan()
         {
@@ -162,6 +192,11 @@ namespace Isas_PizzaTests
             Assert.False(isValid);
         }
         
+       /// \test 
+        /// <summary>
+        /// Probar que una fecha de vencimiento en el pasado dispara un
+        /// error de validación.
+        /// </summary>
         [Fact]
         public void ValidacionFechaVencimientoPasadaFalla()
         {
