@@ -9,7 +9,8 @@ class Pizzeria
     IPersistenceLayer<IngredienteEnStock> inventario;
     IPersistenceLayer<Orden> ordenes;
 
-    IUserAgent usuarioActivo;
+    IUserAgent? usuarioActivo = null;
+    IAuthenticator auth = new GenericAuthenticator(new AuthPersistenceLayer("userdb.txt"), new PrimitiveIO());
 
     /// <summary>
     /// Inicializar capa de persistencia e interfaz.
@@ -33,7 +34,11 @@ class Pizzeria
     /// </details>
     public void Enter()
     {
-    
+        if (this.usuarioActivo is null)
+        {
+            this.usuarioActivo = auth.Authenticate(new CredentialPrompter());
+        }
+        Console.WriteLine(this.usuarioActivo.GetRole());
     }
 
     public static void Main(string[] args)

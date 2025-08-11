@@ -7,12 +7,7 @@ namespace Isas_Pizza
     /// <summary>
     /// Credenciales de autenticación de un usuario.
     /// </summary>
-    /// \todo Poner validaciones apropiadas.
-    public record struct LoginCredentials
-    {
-        public int id;
-        public string password;
-    }
+    public record struct LoginCredentials(int id, string password);
     /// <summary>
     /// Representa un objeto capaz de entregar un usuario autenticado dado
     /// un medio para preguntarle al usuario sus credenciales.
@@ -48,6 +43,7 @@ namespace Isas_Pizza
     {
         private IROPersistenceLayer<RegisteredUser> _userRegister;
         private IBlockingDisplayer<string> _printer;
+        private IHashingProvider _hasher;
 
         public GenericAuthenticator(
             IROPersistenceLayer<RegisteredUser> userRegister,
@@ -56,13 +52,25 @@ namespace Isas_Pizza
         {
             this._userRegister = userRegister;
             this._printer = printer;
+            this._hasher = new SHA512HashingProvider();
         }
 
         public IUserAgent Authenticate(
             IBlockingPrompter<LoginCredentials?> prompter
         )
         {
-            throw new NotImplementedException();
+            LoginCredentials? credentials = prompter.Ask(null);
+            if (credentials is null)
+                return new NonRegisteredUser();
+            
+            RegisteredUser usuario = _userRegister.View(null).First(
+                u => u.id == credentials?.id &&
+                    _hasher.Verify(credentials?.password, u.passwordHash)
+            );
+            if (usuario is not null)
+                return usuario;
+            this._printer.Display(new string[]{"Credenciales inválidas."});
+            return this.Authenticate(prompter);
         }
     }
 }
