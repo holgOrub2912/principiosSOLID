@@ -62,7 +62,10 @@ namespace Isas_Pizza.IO
 
                 if (!isValid)
                 {
-                    Console.WriteLine($"Error: {validationResults[0].ErrorMessage}");
+                    Console.WriteLine(
+                        "Se presentaron los siguientes errores:\n"
+                        + string.Join("\n", validationResults.Select(vr => vr.ErrorMessage))
+                    );
                     continue;
                 }
 
