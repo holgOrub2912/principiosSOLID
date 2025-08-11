@@ -1,88 +1,14 @@
 using Isas_Pizza;
+using Isas_Pizza.Persistence.EFModel;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using System.Diagnostics.Contracts;
 
 namespace Isas_Pizza.Persistence
 {
-    /// <sumary>
-    /// Representación de un Ingrediente en una base de datos soportada por EF
-    /// </sumary>
-    public record class EFIngrediente
-    {
-        /// <summary>Nombre del ingrediente.</summary>
-        [Key]
-        public string Nombre {get; set;}
-        /// <summary>Descripción del tipo de ingrediente.</summary>
-        public string Descripcion {get; set;}
-        /// <summary>Unidades con las que se mide el ingrediente.</summary>
-        public Unidad Unidad {get; set;}
-
-        /// <summary>Convertir a Ingrediente</summary>
-        public Ingrediente Export()
-            => new Ingrediente {
-                nombre = this.Nombre,
-                descripcion = this.Descripcion,
-                unidad = this.Unidad
-            };
-
-        public EFIngrediente(string Nombre, string Descripcion, Unidad Unidad)
-        {
-            this.Nombre = Nombre;
-            this.Descripcion = Descripcion;
-            this.Unidad = Unidad;
-        }
-        /// <summary>Construir basados en Ingrediente</summary>
-        public EFIngrediente(Ingrediente ingrediente)
-            : this(ingrediente.nombre,
-                   ingrediente.descripcion,
-                   ingrediente.unidad) {}
-    }
-
-    /// <sumary>
-    /// Representación de un IngredienteEnStock en una base de datos soportada por EF
-    /// </sumary>
-    public record class EFIngredienteEnStock
-    {
-        /// <summary>Id del ingrediente.</summary>
-        [Key]
-        [ForeignKey(nameof(Ingrediente))]
-        public string IngredienteNombre {get; set;}
-        public EFIngrediente Ingrediente {get; set;}
-        /// <summary>Cantidad asociada al ingrediente.</summary>
-        public double Cantidad {get; set;}
-        /// <summary>Descripción del tipo de ingrediente.</summary>
-        public DateTime FechaVencimiento {get; set;}
-
-        /// <summary>Convertir a IngredienteEnStock</summary>
-        public IngredienteEnStock Export()
-            => new IngredienteEnStock {
-                ingrediente = this.Ingrediente != null ? this.Ingrediente.Export() : null,
-                cantidad = this.Cantidad,
-                fechaVencimiento = this.FechaVencimiento
-            };
-        
-        public EFIngredienteEnStock(){}
-
-        /// <summary>Construir basados en IngredienteEnStock</summary>
-        public EFIngredienteEnStock(IngredienteEnStock ingredienteEnStock)
-        {
-            this.IngredienteNombre = ingredienteEnStock.ingrediente.nombre;
-            this.Ingrediente = new EFIngrediente(ingredienteEnStock.ingrediente);
-            this.Cantidad = ingredienteEnStock.cantidad;
-            this.FechaVencimiento = ingredienteEnStock.fechaVencimiento;
-        }
-
-        public EFIngredienteEnStock(IngredienteEnStock ingredienteEnStock,
-                                    EFContext ctx)
-            : this(ingredienteEnStock)
-        {
-            this.Ingrediente = ctx.Ingredientes.Single(i => i.Nombre == this.IngredienteNombre);
-        }
-    }
-
     /// <summary>
     /// Contexto para una base de datos SQLite
     /// </summary>
@@ -90,6 +16,10 @@ namespace Isas_Pizza.Persistence
     {
         public DbSet<EFIngrediente> Ingredientes {get; set;}
         public DbSet<EFIngredienteEnStock> IngredientesEnStock {get; set;}
+        public DbSet<EFIngredienteCantidad> IngredientesCantidad {get; set;}
+        public DbSet<EFProducto> Productos {get; set;}
+        public DbSet<EFProductoOrden> ProductosOrdenes {get; set;}
+        public DbSet<EFOrden> Ordenes {get; set;}
         public string _dbpath;
 
         public EFContext(string dbpath)
@@ -104,6 +34,13 @@ namespace Isas_Pizza.Persistence
         /// \todo parametrizar el nombre de la conexión.
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite($"DataSource = {this._dbpath}; Cache=Shared");
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<EFProductoOrden>()
+                .HasKey(po => new { po.NombreProducto, po.NumeroOrden });
+        }
+
     }
 
     /// <summary>
@@ -121,7 +58,9 @@ namespace Isas_Pizza.Persistence
 
     public class EFPersistenceLayer :
         IROPersistenceLayer<Ingrediente>,
-        IPersistenceLayer<IngredienteEnStock>
+        IPersistenceLayer<IngredienteEnStock>,
+        IROPersistenceLayer<Producto>,
+        IPersistenceLayer<Orden>
     {
         /// <summary>
         /// Contexto de conexión a la base de datos
@@ -143,8 +82,19 @@ namespace Isas_Pizza.Persistence
             {
                 this._context.Ingredientes.RemoveRange(ingredientes);
             }
+            ICollection<EFProducto> productos = this._context.Productos.ToList();
+            if (productos.Count() > 0)
+            {
+                this._context.Productos.RemoveRange(productos);
+            }
+            ICollection<EFOrden> ordenes = this._context.Ordenes.ToList();
+            if (ordenes.Count() > 0)
+            {
+                this._context.Ordenes.RemoveRange(ordenes);
+            }
             this._context.SaveChanges();
             this._context.Ingredientes.AddRange(InitData.ingredientes);
+            this._context.Productos.AddRange(InitData.productos);
             this._context.SaveChanges();
         }
 
@@ -189,6 +139,39 @@ namespace Isas_Pizza.Persistence
         {
             EFIngredienteEnStock ingES = this.RetrieveIES(target);
             this._context.IngredientesEnStock.Remove(ingES);
+            this._context.SaveChanges();
+        }
+
+        public IEnumerable<Producto> View(Producto? _)
+            => (IEnumerable<Producto>) this._context.Productos
+                .ToList()
+                .Select(p => p.Export());
+
+        public IEnumerable<Orden> View(Orden? _)
+            => this._context.Ordenes.Select(o => o.Export());
+        
+        public void Save(IEnumerable<Orden> ordenes)
+        {
+            IEnumerable<EFOrden> efOrdenes = ordenes
+                .Select(o => new EFOrden(o, this._context));
+
+            this._context.AddRange(efOrdenes);
+            this._context.SaveChanges();
+        }
+
+        private EFOrden RetrieveEFOrden(Orden source)
+            => this._context.Ordenes
+                .Single(o => o.NumeroOrden == source.numeroOrden);
+        public void Update(Orden source, Orden target)
+        {
+            EFOrden efOrden = RetrieveEFOrden(source);
+            efOrden.Estado = target.estado;
+            this._context.SaveChanges();
+        }
+        public void Delete(Orden orden)
+        {
+            EFOrden efOrden = RetrieveEFOrden(orden);
+            this._context.Ordenes.Remove(efOrden);
             this._context.SaveChanges();
         }
     }

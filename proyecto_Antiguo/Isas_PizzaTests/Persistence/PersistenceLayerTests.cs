@@ -4,6 +4,9 @@ using Xunit.Abstractions;
 using Isas_Pizza;
 using Isas_Pizza.Persistence;
 using System.ComponentModel.DataAnnotations;
+using System.Collections;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Isas_PizzaTests.Persistence
 {
@@ -57,8 +60,7 @@ namespace Isas_PizzaTests.Persistence
 
         /// \test
         /// <summary>
-        /// Probar si es posible crear un nuevo ingredienteEnStock en
-        /// una IPersistenceLayer
+        /// Probar el manejo de ingredientes en Stock
         /// </summary>
         [Fact]
         public void SalvarIngredienteEnStock()
@@ -89,21 +91,63 @@ namespace Isas_PizzaTests.Persistence
             Assert.Equal(0, ingredienteESPL.View((IngredienteEnStock?) null).Count());
         }
 
-        /*
         /// \test
         /// <summary>
-        /// Probar si es posible crear un nuevo ingredienteEnStock en
-        /// una IPersistenceLayer
+        /// Probar si es posible recuperar los productos de cada
+        /// IPersistenceLayer
         /// </summary>
         [Fact]
-        public void ActualizarIngredienteEnStock()
+        public void RecuperarProductos()
         {
-            IPersistenceLayer<IngredienteEnStock> ingredienteESPL
-                = new EFPersistenceLayer();
-            Assert.Equal(1, ingredientePL.Save<Ingrediente>(
-                    new IngredienteEnStock[]{ingredienteES}
-            ));
+            IROPersistenceLayer<Producto> productoPL = dbReset();
+            IEnumerable<Producto> productos = productoPL.View((Producto?)null);
+            Assert.Equal(InitData.productos.Count(),
+                productos.Count()
+            );
+            Assert.Equal(InitData.productos[0].Nombre, productos.First().nombre);
         }
-        */
+
+        /// \test
+        /// <summary>
+        /// Probar el manejo de órdenes
+        /// </summary>
+        [Fact]
+        public void SalvarOrden()
+        {
+            EFPersistenceLayer efpl = dbReset();
+            IPersistenceLayer<Orden> ordenPL = efpl;
+            Producto producto = efpl.View((Producto?) null).First();
+
+            Assert.Equal(0, ordenPL.View((Orden?) null).Count());
+            // Guardado
+            ordenPL.Save(
+                new Orden[]{ new Orden {
+                    productosOrdenados = new (Producto,int)[]{(producto,2)},
+                    estado = EstadoOrden.ORDENADA,
+                }}
+            );
+
+            // Lecutra
+            IEnumerable<Orden> ordenes = ordenPL.View((Orden?)null);
+            Orden orden = ordenes.First();
+            Assert.Equal(1, ordenes.Count());
+
+            // Actualización
+            ordenPL.Update(
+                ordenes.First(), new Orden {
+                    numeroOrden = orden.numeroOrden,
+                    estado = EstadoOrden.COCINANDO,
+                    productosOrdenados = orden.productosOrdenados,
+                    ordenadaEn = orden.ordenadaEn
+                }
+            );
+            Assert.Equal(EstadoOrden.COCINANDO,
+                ordenPL.View((Orden?) null).First().estado
+            );
+
+            // Eliminación
+            ordenPL.Delete(orden);
+            Assert.Equal(0, ordenPL.View((Orden?) null).Count());
+        }
     }
 }
