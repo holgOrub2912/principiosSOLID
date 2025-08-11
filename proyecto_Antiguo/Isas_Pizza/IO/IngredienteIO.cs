@@ -7,8 +7,55 @@ using System.Threading.Tasks;
 
 namespace Isas_Pizza.IO
 {
-    public class IngredienteIO : IBlockingDisplayer<IngredienteEnStock>, IBlockingSelector
+    public class IngredienteIO : IBlockingDisplayer<IngredienteEnStock>, IBlockingPrompter
     {
+
+        private readonly ICollection<IngredienteEnStock> _ingredientes;
+
+        // Constructor específico para ingredientes
+        public IngredienteIO(ICollection<IngredienteEnStock> ingredientes)
+        {
+            _ingredientes = ingredientes ?? throw new ArgumentNullException(nameof(ingredientes));
+        }
+
+        public T Ask<T>()
+        {
+            // Validamos que solo se pueda preguntar por IngredienteEnStock
+            if (typeof(T) != typeof(IngredienteEnStock))
+            {
+                throw new InvalidOperationException("Este componente solo funciona con IngredienteEnStock");
+            }
+
+            if (_ingredientes.Count == 0)
+            {
+                throw new InvalidOperationException("No hay ingredientes registrados");
+            }
+
+            Console.WriteLine("\n=== Seleccione un Ingrediente ===");
+
+            int index = 1;
+            foreach (var ingrediente in _ingredientes)
+            {
+                Console.WriteLine($"{index}. {ingrediente.ingrediente.nombre} - Vence: {ingrediente.fechaVencimiento:d}");
+                index++;
+            }
+
+            int selectedIndex;
+            while (true)
+            {
+                Console.Write("Ingrese el número de opción: ");
+                if (int.TryParse(Console.ReadLine(), out selectedIndex) &&
+                    selectedIndex >= 1 &&
+                    selectedIndex <= _ingredientes.Count)
+                {
+                    break;
+                }
+                Console.WriteLine("¡Opción inválida! Intente nuevamente.");
+            }
+
+            return (T)(object)_ingredientes.ElementAt(selectedIndex - 1);
+        }
+
         public void Display(ICollection<IngredienteEnStock> elements)
         {
             Console.WriteLine("=== Ingredientes ===");
@@ -19,34 +66,6 @@ namespace Isas_Pizza.IO
         }
         
 
-        public T SelectOne<T>(ICollection<(string label, T option)> options) {
-            if (options == null || options.Count == 0)
-                throw new ArgumentException("No hay opciones para seleccionar");
-            Console.WriteLine("\n=== Seleccione una opción ===");
-
-            // Mostrar opciones
-            int index = 1;
-            foreach (var (label, _) in options)
-            {
-                Console.WriteLine($"{index}. {label}");
-                index++;
-            }
-
-            // Validar entrada
-            int selectedIndex;
-            while (true)
-            {
-                Console.Write("Ingrese el número de opción: ");
-                if (int.TryParse(Console.ReadLine(), out selectedIndex) &&
-                    selectedIndex >= 1 &&
-                    selectedIndex <= options.Count)
-                {
-                    break;
-                }
-                Console.WriteLine("¡Opción inválida! Intente nuevamente.");
-            }
-
-            return options.ElementAt(selectedIndex - 1).option;
-        }
+        
     }
 }
