@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Isas_Pizza.IO
 {
-    public class ProductoIO: IBlockingDisplayer<Producto>, IBlockingPrompter
+    public class ProductoIO: IBlockingDisplayer<Producto>, IBlockingPrompter<Producto>
     {
         private readonly ICollection<Producto> _productos;
 
@@ -16,14 +16,8 @@ namespace Isas_Pizza.IO
             _productos = productos ?? throw new ArgumentNullException(nameof(productos));
         }
 
-        public T Ask<T>()
+        public Producto Ask(Producto? _)
         {
-            // Validamos que solo se pueda preguntar por Producto
-            if (typeof(T) != typeof(Producto))
-            {
-                throw new InvalidOperationException("Este componente solo funciona con Producto");
-            }
-
             if (_productos.Count == 0)
             {
                 throw new InvalidOperationException("No hay productos registrados");
@@ -97,7 +91,7 @@ namespace Isas_Pizza.IO
                 }
             }
 
-            return (T)(object)productoSeleccionado;
+            return productoSeleccionado;
         }
 
         public void Display(ICollection<Producto> elements)

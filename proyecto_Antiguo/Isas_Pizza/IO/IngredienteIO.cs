@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Isas_Pizza.IO
 {
-    public class IngredienteIO : IBlockingDisplayer<IngredienteEnStock>, IBlockingPrompter
+    public class IngredienteIO : IBlockingDisplayer<IngredienteEnStock>, IBlockingPrompter<IngredienteEnStock>
     {
 
         private readonly ICollection<IngredienteEnStock> _ingredientes;
@@ -18,14 +18,8 @@ namespace Isas_Pizza.IO
             _ingredientes = ingredientes ?? throw new ArgumentNullException(nameof(ingredientes));
         }
 
-        public T Ask<T>()
+        public IngredienteEnStock Ask(IngredienteEnStock? _)
         {
-            // Validamos que solo se pueda preguntar por IngredienteEnStock
-            if (typeof(T) != typeof(IngredienteEnStock))
-            {
-                throw new InvalidOperationException("Este componente solo funciona con IngredienteEnStock");
-            }
-
             if (_ingredientes.Count == 0)
             {
                 throw new InvalidOperationException("No hay ingredientes registrados");
@@ -53,7 +47,7 @@ namespace Isas_Pizza.IO
                 Console.WriteLine("¡Opción inválida! Intente nuevamente.");
             }
 
-            return (T)(object)_ingredientes.ElementAt(selectedIndex - 1);
+            return _ingredientes.ElementAt(selectedIndex - 1);
         }
 
         public void Display(ICollection<IngredienteEnStock> elements)
