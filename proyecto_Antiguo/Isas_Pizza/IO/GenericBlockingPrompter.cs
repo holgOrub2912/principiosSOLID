@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Isas_Pizza.IO
 {
-    public class GenericBlockingPrompter : IBlockingPrompter
+    public class GenericBlockingPrompter<T> : IBlockingPrompter<T>
     {
         private readonly Dictionary<Type, ICollection<object>> _itemsByType;
 
@@ -19,7 +19,7 @@ namespace Isas_Pizza.IO
             }
         }
 
-        public T Ask<T>()
+        public T Ask(T? _)
         {
             if (!_itemsByType.TryGetValue(typeof(T), out var items))
             {
