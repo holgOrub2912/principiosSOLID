@@ -3,6 +3,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Isas_Pizza;
 using Isas_Pizza.Persistence;
+using Isas_Pizza.Persistence.EFModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Isas_PizzaTests.Persistence
