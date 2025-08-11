@@ -37,12 +37,13 @@ namespace Isas_Pizza.IO
     /// un objeto T en una interfaz
     /// bloqueante. e.g. la consola.
     /// </summary>
-    public interface IBlockingPrompter<T>
+    public interface IBlockingPrompter
     {
         /// <summary>
         /// Mostrar al usuario los elementos en elements.
         /// </summary>
         /// <returns>Objeto surgido de la entrada del usuario.</returns>
         public T Ask<T>();
+        //cambio de interfaz por problema de ambigüedad con el parámetro genérico T
     }
 }
