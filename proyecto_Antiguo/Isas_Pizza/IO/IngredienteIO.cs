@@ -17,7 +17,7 @@ namespace Isas_Pizza.IO
                 Console.WriteLine($"- {ingrediente.ingrediente.nombre}, Vence: {ingrediente.fechaVencimiento:d}");
             }
         }
-        public IngredienteEnStock Ask() {
+        public IngredienteEnStock Ask<T>() {
 
             Console.WriteLine("Nuevo stock");
             // Solicitar información del ingrediente base

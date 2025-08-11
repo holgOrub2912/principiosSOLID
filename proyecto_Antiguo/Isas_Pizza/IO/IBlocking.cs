@@ -43,6 +43,6 @@ namespace Isas_Pizza.IO
         /// Mostrar al usuario los elementos en elements.
         /// </summary>
         /// <returns>Objeto surgido de la entrada del usuario.</returns>
-        public T Ask();
+        public T Ask<T>();
     }
 }
