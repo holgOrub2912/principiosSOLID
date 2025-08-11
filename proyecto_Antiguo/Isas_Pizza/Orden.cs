@@ -4,14 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Globalization;
 
 namespace Isas_Pizza
 {
+    public enum EstadoOrden
+    {
+        ORDENADA,
+        COCINANDO,
+        LISTA,
+        ENTREGADA
+    }
+
+    public static class EstadoOrdenExtensions
+    {
+        public static string GetString(this EstadoOrden estado)
+            => estado.ToString("G").ToLower();
+    }
+
     /// <summary>
     /// Orden que un consumidor puede Solicitar.
     /// </summary>
     public record class Orden
     {
+        [Range(0, int.MaxValue)]
+        public int numeroOrden {get; init;}
+
+        public EstadoOrden estado { get; init; }
         /// <summary>
         /// Lista de productos y cantidades por producto que el cliente ordenó.
         /// </summary>
@@ -20,7 +40,7 @@ namespace Isas_Pizza
         /// <summary>
         /// Fecha/Hora en la cual se realizó la orden.
         /// </summary>
-        public DateTime ordenadaEn {get;} = DateTime.Now;
+        public DateTime ordenadaEn { get; init; } = DateTime.Now;
     }
 
     
