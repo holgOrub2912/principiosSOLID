@@ -3,6 +3,7 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace Isas_Pizza.Persistence
 {
@@ -89,6 +90,12 @@ namespace Isas_Pizza.Persistence
     {
         public DbSet<EFIngrediente> Ingredientes {get; set;}
         public DbSet<EFIngredienteEnStock> IngredientesEnStock {get; set;}
+        public string _dbpath;
+
+        public EFContext(string dbpath)
+        {
+            this._dbpath = dbpath;
+        }
         // public DbSet<EFIngredienteEnStock> IngredientesEnStock {get; set;}
 
         /// <summary>
@@ -96,7 +103,20 @@ namespace Isas_Pizza.Persistence
         /// </summary>
         /// \todo parametrizar el nombre de la conexión.
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("DataSource = /home/fer/.pizzeria.db; Cache=Shared");
+            => options.UseSqlite($"DataSource = {this._dbpath}; Cache=Shared");
+    }
+
+    /// <summary>
+    /// Design-time dbcontext factory to manage migrations and database
+    /// updates from dotnet ef CLI
+    /// </summary>
+    public class EFContextFactory : IDesignTimeDbContextFactory<EFContext>
+    {
+        public EFContext CreateDbContext(string[] args)
+        {
+            DbContextOptionsBuilder<EFContext> optionsBuilder = new();
+            return new EFContext(args[0]);
+        }
     }
 
     public class EFPersistenceLayer :
@@ -108,9 +128,9 @@ namespace Isas_Pizza.Persistence
         /// </summary>
         private EFContext _context;
 
-        public EFPersistenceLayer()
+        public EFPersistenceLayer(string dbpath)
         {
-            this._context = new EFContext();
+            this._context = new EFContext(dbpath);
         }
 
         /// <summary>
