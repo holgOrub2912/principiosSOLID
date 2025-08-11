@@ -34,20 +34,60 @@ namespace Isas_Pizza.IO
                 index++;
             }
 
-            int selectedIndex;
+            IngredienteEnStock ingredienteSeleccionado;
             while (true)
             {
-                Console.Write("Ingrese el número de opción: ");
-                if (int.TryParse(Console.ReadLine(), out selectedIndex) &&
-                    selectedIndex >= 1 &&
-                    selectedIndex <= _ingredientes.Count)
+                Console.Write("\nIngrese el nombre del ingrediente deseado: ");
+                string nombreIngrediente = Console.ReadLine()?.Trim() ?? string.Empty;
+
+                // Validación del nombre
+                var validationResults = new List<ValidationResult>();
+                var ingredienteTest = new Ingrediente { nombre = nombreIngrediente };
+                bool isValid = Validator.TryValidateObject(
+                    ingredienteTest,
+                    new ValidationContext(ingredienteTest),
+                    validationResults,
+                    true
+                );
+
+                if (!isValid)
+                {
+                    Console.WriteLine(
+                        "Se presentaron los siguientes errores:\n" +
+                        string.Join("\n", validationResults.Select(vr => vr.ErrorMessage))
+                    );
+                    continue;
+                }
+
+                // Buscar ingrediente (insensible a mayúsculas y con coincidencia parcial)
+                ingredienteSeleccionado = _ingredientes.FirstOrDefault(i =>
+                    i.ingrediente.nombre.Contains(nombreIngrediente, StringComparison.OrdinalIgnoreCase));
+
+                if (ingredienteSeleccionado != null)
                 {
                     break;
                 }
-                Console.WriteLine("¡Opción inválida! Intente nuevamente.");
+
+                Console.WriteLine("Ingrediente no encontrado. Intente nuevamente.");
+                Console.WriteLine("Sugerencias:");
+                var sugerencias = _ingredientes
+                    .Where(i => i.ingrediente.nombre.Contains(nombreIngrediente, StringComparison.OrdinalIgnoreCase))
+                    .Take(3);
+
+                if (sugerencias.Any())
+                {
+                    foreach (var sug in sugerencias)
+                    {
+                        Console.WriteLine($"- {sug.ingrediente.nombre} (Vence: {sug.fechaVencimiento:d})");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No se encontraron sugerencias similares");
+                }
             }
 
-            return _ingredientes.ElementAt(selectedIndex - 1);
+            return ingredienteSeleccionado;
         }
 
         public void Display(ICollection<IngredienteEnStock> elements)
