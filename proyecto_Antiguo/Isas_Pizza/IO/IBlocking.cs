@@ -28,7 +28,7 @@ namespace Isas_Pizza.IO
         /// Mostrar al usuario los elementos en elements.
         /// </summary>
         /// <param name="elements">Elementos a mostrar.</param>
-        public void Display<T>(ICollection<T> elements);
+        public void Display(ICollection<T> elements);
     }
 
     /// \todo Implementar esta interfaz para Orden e IngredienteEnStock
@@ -43,6 +43,6 @@ namespace Isas_Pizza.IO
         /// Mostrar al usuario los elementos en elements.
         /// </summary>
         /// <returns>Objeto surgido de la entrada del usuario.</returns>
-        public T Ask<T>();
+        public T Ask();
     }
 }
