@@ -10,12 +10,21 @@ namespace Isas_Pizza.Persistence
             new EFIngrediente("Tomate",
                               "Tomate Alino",
                               Unidad.UNIDAD),
-            new EFIngrediente("Ajo",
-                              "Diente de ajo",
+            new EFIngrediente("Cebolla",
+                              "Unidad de cebolla",
                               Unidad.UNIDAD),
             new EFIngrediente("Masa",
                               "Masa de trigo",
                               Unidad.GRAMO),
+            new EFIngrediente("Queso mozzarella",
+                              "Queso mozzarella en bloque",
+                              Unidad.GRAMO),
+            new EFIngrediente("Peperoni",
+                              "Peperoni en torrejas",
+                              Unidad.GRAMO),
+            new EFIngrediente("Ajo",
+                              "Diente de ajo",
+                              Unidad.UNIDAD),
             new EFIngrediente("pimienta",
                               "Pimienta negra molida",
                               Unidad.GRAMO),
@@ -26,6 +35,7 @@ namespace Isas_Pizza.Persistence
             new EFProducto
             {
                 Nombre = "Napolitana",
+                Precio = 30000.0,
                 IngredientesRequeridos = new EFIngredienteCantidad[]
                 {
                     new EFIngredienteCantidad
