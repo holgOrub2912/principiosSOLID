@@ -137,6 +137,7 @@ namespace Isas_PizzaTests.Persistence
             Orden orden = ordenes.First();
             Assert.Equal(1, ordenes.Count());
             Assert.Equal(2, orden.productosOrdenados.First().cantidad);
+            Assert.Equal("Napolitana", orden.productosOrdenados.First().producto.nombre);
 
             // Actualización
             ordenPL.Update(
