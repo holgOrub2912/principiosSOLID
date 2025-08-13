@@ -160,6 +160,7 @@ namespace Isas_Pizza.Persistence.EFModel
         /// <summary>Nombre del Producto</summary>
         [Key]
         public string Nombre {get; set;}
+        public double Precio { get; set;}
         /// <summary>Ingredientes que requiere el producto para ser
         /// preparado.</summary>
         public ICollection<EFIngredienteCantidad> IngredientesRequeridos { get; set; }
@@ -169,6 +170,7 @@ namespace Isas_Pizza.Persistence.EFModel
         public Producto Export() => new Producto
         {
             nombre = this.Nombre,
+            precio = this.Precio,
             ingredientesRequeridos = (ICollection<IngredienteCantidad>)
                 this.IngredientesRequeridos.Select(i => i.Export()).ToList()
         };

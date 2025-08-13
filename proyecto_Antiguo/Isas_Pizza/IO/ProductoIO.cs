@@ -15,15 +15,19 @@ namespace Isas_Pizza.IO
         {
             Console.WriteLine("\n=== MENÚ DE PRODUCTOS ===");
 
-            //colección de IngredienteCantidad
+            int maxNameLength = elements.Max(p => p.nombre.Length);
+            // colección de IngredienteCantidad
             foreach (var producto in elements)
             {
                 var ingredientes = producto.ingredientesRequeridos
                     .Select(i => $"{i.cantidad} {i.ingrediente.unidad} de {i.ingrediente.nombre}");
 
                 Console.WriteLine(
-                    $"\n{producto.nombre.ToUpper()}\n" +
-                    $"Ingredientes: {string.Join(", ", ingredientes)}"
+                    String.Format(
+                        "{0,-" + maxNameLength.ToString() +"} {1,10}",
+                        producto.nombre, producto.precio
+                    ) +
+                    $"\nIngredientes: {string.Join(", ", ingredientes)}"
                 );
             }
 
