@@ -70,6 +70,17 @@ namespace Isas_Pizza.Persistence
         public EFPersistenceLayer(string dbpath)
         {
             this._context = new EFContext(dbpath);
+            // Verificar la integridad de la base de datos
+            try {
+                this._context.Ingredientes.FirstOrDefault();
+                this._context.IngredientesCantidad.FirstOrDefault();
+                this._context.IngredientesEnStock.FirstOrDefault();
+                this._context.Productos.FirstOrDefault();
+                this._context.ProductosOrdenes.FirstOrDefault();
+                this._context.Ordenes.FirstOrDefault();
+            } catch {
+                throw new PersistenceException($"Al leer la base de datos {dbpath}");
+            }
         }
 
         /// <summary>
