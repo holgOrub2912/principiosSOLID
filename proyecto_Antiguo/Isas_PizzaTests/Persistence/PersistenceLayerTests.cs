@@ -136,6 +136,7 @@ namespace Isas_PizzaTests.Persistence
             IEnumerable<Orden> ordenes = ordenPL.View((Orden?)null);
             Orden orden = ordenes.First();
             Assert.Equal(1, ordenes.Count());
+            Assert.Equal(2, orden.productosOrdenados.First().cantidad);
 
             // Actualización
             ordenPL.Update(

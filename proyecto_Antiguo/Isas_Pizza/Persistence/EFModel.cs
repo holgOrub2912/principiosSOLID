@@ -236,6 +236,7 @@ namespace Isas_Pizza.Persistence.EFModel
                     NumeroOrden = this.NumeroOrden,
                     Producto =  ctx.Productos
                         .Single(p => p.Nombre == t.producto.nombre),
+                    Cantidad = t.cantidad,
                 }).ToList();
         }
     }
