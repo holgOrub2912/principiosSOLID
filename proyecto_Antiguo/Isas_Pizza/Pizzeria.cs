@@ -66,7 +66,7 @@ public class Pizzeria
         this.ingredientePt = ingredientePtGen(this.ingredientes.View(null));
         this.ordenPt = ordenPtGen(this.menu.View(null));
     }
-
+    
     public void LogIn(IBlockingPrompter<LoginCredentials?> prompter)
     {
         this.usuarioActivo = auth.Authenticate(prompter);
@@ -84,4 +84,16 @@ public class Pizzeria
     {
         pizzeria.usuarioActivo = null;
     }
+    public static void RestoreData
+    (
+        string dbServer,
+        string dbName,
+        string dbUser,
+        string dbPassword
+    ) => new EFPersistenceLayer(new Dictionary<string,string>{
+            {"Host", dbServer},
+            {"Database", dbName},
+            {"Username", dbUser},
+            {"Password", dbPassword},
+        }).initData(true);
 }

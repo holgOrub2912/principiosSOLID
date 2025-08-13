@@ -126,20 +126,20 @@ namespace Isas_Pizza.Persistence
         /// <summary>
         /// Inicializar datos de ejemplo
         /// </summary>
-        public void _initData()
+        public void initData(bool fromScratch)
         {
             ICollection<EFIngrediente> ingredientes = this._context.Ingredientes.ToList();
-            if (ingredientes.Count() > 0)
+            if (fromScratch || ingredientes.Count > 0)
             {
                 this._context.Ingredientes.RemoveRange(ingredientes);
             }
             ICollection<EFProducto> productos = this._context.Productos.ToList();
-            if (productos.Count() > 0)
+            if (fromScratch || productos.Count > 0)
             {
                 this._context.Productos.RemoveRange(productos);
             }
             ICollection<EFOrden> ordenes = this._context.Ordenes.ToList();
-            if (ordenes.Count() > 0)
+            if (fromScratch || ordenes.Count > 0)
             {
                 this._context.Ordenes.RemoveRange(ordenes);
             }

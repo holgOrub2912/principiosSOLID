@@ -33,7 +33,7 @@ namespace Isas_PizzaTests.Persistence
                 {"Username", DefaultParameters.dbUser},
                 {"Password", DefaultParameters.dbPassword},
             });
-            efpl._initData();
+            efpl.initData(false);
             return efpl;
         }
 

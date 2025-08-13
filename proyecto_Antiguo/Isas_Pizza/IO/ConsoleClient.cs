@@ -36,6 +36,7 @@ namespace Isas_Pizza.IO
             Option<bool> resetDatabase = new("--resetdb", "-r")
             {
                 Description = "Restaurar valores en la base de datos.",
+                DefaultValueFactory = parseResult => false
             };
             RootCommand rootCommand = new("Isa's Pizza")
             {
@@ -44,15 +45,30 @@ namespace Isas_Pizza.IO
                 dbuser,
                 dbpassword,
                 authfile,
+                resetDatabase,
             };
             ParseResult cmdArgs = rootCommand.Parse(args);
+
+            IBlockingSelector menuSelector = new MenuGenericoIO();
     
             IBlockingPrompter<LoginCredentials?> loginPrompter = new CredentialPrompter();
             PrimitiveIO defaultPrimitiveIO = new PrimitiveIO();
     
-            IBlockingSelector menuSelector = new MenuGenericoIO();
-    
             try {
+                if (cmdArgs.GetValue(resetDatabase)){
+                    Console.WriteLine("¿Estás seguro que quieres restaurar la base de datos?");
+                    if (
+                        menuSelector.SelectOne<bool>([("Sí, estoy seguro", true), ("No, no restaurar", false)]) 
+                    )
+                        Pizzeria.RestoreData(
+                            cmdArgs.GetValue(dbserver),
+                            cmdArgs.GetValue(dbname),
+                            cmdArgs.GetValue(dbuser),
+                            cmdArgs.GetValue(dbpassword)
+                        );
+                    return;
+                }
+
                 Pizzeria pizzeria = new Pizzeria(
                     cmdArgs.GetValue(authfile),
                     cmdArgs.GetValue(dbserver),
@@ -66,6 +82,7 @@ namespace Isas_Pizza.IO
                     ings => new IngredienteIO(menuSelector, ings),
                     prods => new OrdenIO(menuSelector, prods)
                 );
+
                 pizzeria.LogIn(loginPrompter);
                 while (pizzeria.usuarioActivo is not null)
                     menuSelector.SelectOne(
