@@ -10,19 +10,25 @@ namespace Isas_Pizza.IO
     public class OrdenIO : IBlockingDisplayer<Orden>, IBlockingPrompter<Orden>
     {
 
-        private readonly MenuGenericoIO _menuGenerico = new MenuGenericoIO();
+        private readonly IBlockingSelector _menuGenerico;
+        private readonly IEnumerable<Producto> _productos;
         private static readonly Random _random = new Random();
+
+        public OrdenIO
+        (
+            IBlockingSelector menuGenerico,
+            IEnumerable<Producto> productos
+        )
+        {
+            this._menuGenerico = menuGenerico;
+            this._productos = productos;
+        }
         public Orden Ask(Orden? _)
         {
-            // Asumo que `_` es la lista de productos disponibles
-            if (!(_ is ICollection<Producto> productosDisponibles))
-                throw new ArgumentException("El parámetro debe ser una colección de Producto");
-
-            if (!productosDisponibles.Any())
+            if (!this._productos.Any())
                 throw new InvalidOperationException("No hay productos disponibles para seleccionar");
-
             
-            var opciones = productosDisponibles
+            var opciones = this._productos
                 .Select(p => (
                     $"{p.nombre}",  // Solo mostramos el nombre del producto
                     p
@@ -44,7 +50,7 @@ namespace Isas_Pizza.IO
             // Crear la orden con el producto seleccionado
             var nuevaOrden = new Orden
             {
-                numeroOrden = _random.Next(1000, 9999), // se asigna aleatorio
+                // numeroOrden = _random.Next(1000, 9999), // se asigna aleatorio
                 estado = EstadoOrden.ORDENADA,
                 productosOrdenados = new List<(Producto producto, int cantidad)>
                 {

@@ -2,29 +2,38 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Isas_Pizza.Persistence;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace Isas_Pizza.IO
 {
     public class IngredienteIO : IBlockingDisplayer<IngredienteEnStock>, IBlockingPrompter<IngredienteEnStock>
     {
 
-        private readonly MenuGenericoIO _menuGenerico = new MenuGenericoIO();
+        private readonly IBlockingSelector _menuGenerico;
+        private readonly IEnumerable<Ingrediente> _ingredientes;
+
+        public IngredienteIO
+        (
+            IBlockingSelector menuGenerico,
+            IEnumerable<Ingrediente> ingredientes
+        )
+        {
+            this._menuGenerico = menuGenerico;
+            this._ingredientes = ingredientes;
+        }
+        
 
         public IngredienteEnStock Ask(IngredienteEnStock? _)
         {
 
-            //Asumo que `_` es la lista de ingredientes disponibles
-
-            if (!(_ is ICollection<Ingrediente> ingredientesDisponibles))
-                throw new ArgumentException("El parámetro debe ser una colección de Ingrediente");
-
-            if (!ingredientesDisponibles.Any())
+            if (!this._ingredientes.Any())
                 throw new InvalidOperationException("No hay ingredientes disponibles para seleccionar");
 
-            var opciones = ingredientesDisponibles
+            var opciones = this._ingredientes
                 .Select(ing => (
                     $"{ing.nombre} ({ing.unidad.GetString(false)})", 
                     ing
