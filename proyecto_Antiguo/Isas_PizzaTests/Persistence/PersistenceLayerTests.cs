@@ -27,7 +27,12 @@ namespace Isas_PizzaTests.Persistence
 
         private EFPersistenceLayer dbReset()
         {
-            EFPersistenceLayer efpl = new EFPersistenceLayer("../../../../pizzeria.db");
+            EFPersistenceLayer efpl = new EFPersistenceLayer(new Dictionary<string,string>{
+                {"Host", DefaultParameters.dbServer},
+                {"Database", DefaultParameters.dbName},
+                {"Username", DefaultParameters.dbUser},
+                {"Password", DefaultParameters.dbPassword},
+            });
             efpl._initData();
             return efpl;
         }

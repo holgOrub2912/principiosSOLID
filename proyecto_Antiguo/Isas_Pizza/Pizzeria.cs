@@ -1,11 +1,12 @@
 using System;
+using System.CommandLine;
 using System.ComponentModel;
+using System.Diagnostics.Tracing;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using Isas_Pizza;
 using Isas_Pizza.IO;
 using Isas_Pizza.Persistence;
-using SQLitePCL;
 
 public class Pizzeria
 {
@@ -31,17 +32,25 @@ public class Pizzeria
     /// </summary>
     public Pizzeria
     (
-        string dbPath,
-        string authPath,
+        string authFile,
+        string dbServer,
+        string dbName,
+        string dbUser,
+        string dbPassword,
         IBlockingDisplayer<Producto> productoDp,
         IBlockingDisplayer<IngredienteEnStock> ingredienteDp,
         IBlockingDisplayer<string> stringDp
     )
     {
         this.productoDp = productoDp;
-        this.auth = new GenericAuthenticator(new AuthPersistenceLayer(authPath), stringDp);
-        EFPersistenceLayer dataStorage = new EFPersistenceLayer(dbPath);
-        
+        this.auth = new GenericAuthenticator(new AuthPersistenceLayer(authFile), stringDp);
+
+        EFPersistenceLayer dataStorage = new EFPersistenceLayer(new Dictionary<string,string>{
+            {"Host", dbServer},
+            {"Database", dbName},
+            {"Username", dbUser},
+            {"Password", dbPassword},
+        });
         this.inventario = dataStorage;
         this.ingredientes = dataStorage;
         this.menu = dataStorage;
@@ -68,10 +77,40 @@ public class Pizzeria
 
     public static void Main(string[] args)
     {
-        if (args.Length < 2){
-            Console.WriteLine("Especificar localización de base de datos y archivo de autenticación por favor.");
-            return;
-        }
+        Option<string> dbserver = new("--dbserver", "-s")
+        {
+            Description = "Host de base de datos al cual conectarse.",
+            DefaultValueFactory = parseResult => DefaultParameters.dbServer,
+        };
+        Option<string> dbname = new("--dbname", "-d")
+        {
+            Description = "Nombre de la base de datos a la que conectarse.",
+            DefaultValueFactory = parseResult => DefaultParameters.dbName,
+        };
+        Option<string> dbuser = new("--dbuser", "-u")
+        {
+            Description = "Nombre de usuario para conexión a la base de datos.",
+            DefaultValueFactory = parseResult => DefaultParameters.dbUser,
+        };
+        Option<string> dbpassword = new("--dbpassword", "-p")
+        {
+            Description = "Contraseña para conexión a la base de datos.",
+            DefaultValueFactory = parseResult => DefaultParameters.dbPassword,
+        };
+        Option<string> authfile = new("--authfile", "-p")
+        {
+            Description = "Archivo de credenciales",
+            DefaultValueFactory = parseResult => DefaultParameters.authfile,
+        };
+        RootCommand rootCommand = new("Isa's Pizza")
+        {
+            dbserver,
+            dbname,
+            dbuser,
+            dbpassword,
+            authfile,
+        };
+        ParseResult cmdArgs = rootCommand.Parse(args);
 
         IBlockingPrompter<LoginCredentials?> loginPrompter = new CredentialPrompter();
         IBlockingDisplayer<IngredienteEnStock> ingredienteDp = new IngredienteIO(new IngredienteEnStock[1]);
@@ -81,8 +120,11 @@ public class Pizzeria
 
         try {
             Pizzeria pizzeria = new Pizzeria(
-                args[0],
-                args[1],
+                cmdArgs.GetValue(authfile),
+                cmdArgs.GetValue(dbserver),
+                cmdArgs.GetValue(dbname),
+                cmdArgs.GetValue(dbuser),
+                cmdArgs.GetValue(dbpassword),
                 new ProductoIO([new Producto{}]),
                 ingredienteDp,
                 defaultPrimitiveIO

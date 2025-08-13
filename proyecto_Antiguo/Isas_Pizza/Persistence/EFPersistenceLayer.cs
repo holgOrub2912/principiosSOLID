@@ -6,12 +6,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using System.Diagnostics.Contracts;
+using System.ComponentModel;
+using Microsoft.Extensions.Options;
+using System.CommandLine;
 
 namespace Isas_Pizza.Persistence
 {
-    /// <summary>
-    /// Contexto para una base de datos SQLite
-    /// </summary>
     public class EFContext : DbContext
     {
         public DbSet<EFIngrediente> Ingredientes {get; set;}
@@ -20,11 +20,18 @@ namespace Isas_Pizza.Persistence
         public DbSet<EFProducto> Productos {get; set;}
         public DbSet<EFProductoOrden> ProductosOrdenes {get; set;}
         public DbSet<EFOrden> Ordenes {get; set;}
-        public string _dbpath;
+        private readonly string _connectionString;
 
-        public EFContext(string dbpath)
+        /// <summary>
+        /// Recibir los parámetros de conexión.
+        /// </summary>
+        /// <param name="connectionOptions">Parámetros ce conexión a la base de datos.</param>
+        public EFContext(IDictionary<string, string> connectionOptions)
         {
-            this._dbpath = dbpath;
+            this._connectionString  = string.Join(";",
+                connectionOptions
+                    .Select(item => $"{item.Key}={item.Value}")
+            );
         }
         // public DbSet<EFIngredienteEnStock> IngredientesEnStock {get; set;}
 
@@ -33,7 +40,7 @@ namespace Isas_Pizza.Persistence
         /// </summary>
         /// \todo parametrizar el nombre de la conexión.
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"DataSource = {this._dbpath}; Cache=Shared");
+            => options.UseNpgsql(this._connectionString);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,7 +59,40 @@ namespace Isas_Pizza.Persistence
         public EFContext CreateDbContext(string[] args)
         {
             DbContextOptionsBuilder<EFContext> optionsBuilder = new();
-            return new EFContext(args[0]);
+            Option<string> server = new("--server")
+            {
+                DefaultValueFactory = results => DefaultParameters.dbServer
+            };
+            Option<string> database = new("--database")
+            {
+                DefaultValueFactory = results => DefaultParameters.dbName
+            };
+            Option<string> user = new("--user")
+            {
+                DefaultValueFactory = results => DefaultParameters.dbUser
+            };
+            Option<string> password = new("--password")
+            {
+                DefaultValueFactory = results => DefaultParameters.dbPassword
+            };
+
+            RootCommand rootCommand = new("Design EFPersistenceLayer module")
+            {
+                user,
+                password,
+                server,
+                database
+            };
+            ParseResult parseResult = rootCommand.Parse(args);
+
+            Dictionary<string, string> dbOptions = new Dictionary<string, string>
+            {
+                { "Host", parseResult.GetValue(server) },
+                { "Username", parseResult.GetValue(user) },
+                { "Database", parseResult.GetValue(database) },
+                { "Password", parseResult.GetValue(password) },
+            };
+            return new EFContext(dbOptions);
         }
     }
 
@@ -65,11 +105,11 @@ namespace Isas_Pizza.Persistence
         /// <summary>
         /// Contexto de conexión a la base de datos
         /// </summary>
-        private EFContext _context;
+        public EFContext _context;
 
-        public EFPersistenceLayer(string dbpath)
+        public EFPersistenceLayer(IDictionary<string,string> dbOptions)
         {
-            this._context = new EFContext(dbpath);
+            this._context = new EFContext(dbOptions);
             // Verificar la integridad de la base de datos
             try {
                 this._context.Ingredientes.FirstOrDefault();
@@ -79,7 +119,7 @@ namespace Isas_Pizza.Persistence
                 this._context.ProductosOrdenes.FirstOrDefault();
                 this._context.Ordenes.FirstOrDefault();
             } catch {
-                throw new PersistenceException($"Al leer la base de datos {dbpath}");
+                throw new PersistenceException($"Al leer la base de datos seleccionada.");
             }
         }
 

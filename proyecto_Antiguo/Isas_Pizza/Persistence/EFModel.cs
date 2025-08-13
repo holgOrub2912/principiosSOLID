@@ -61,6 +61,7 @@ namespace Isas_Pizza.Persistence.EFModel
         /// <summary>Cantidad asociada al ingrediente.</summary>
         public double Cantidad {get; set;}
         /// <summary>Descripción del tipo de ingrediente.</summary>
+        [Column(TypeName = "timestamp(6)")]
         public DateTime FechaVencimiento {get; set;}
 
         /// <summary>Convertir a IngredienteEnStock</summary>
@@ -205,6 +206,7 @@ namespace Isas_Pizza.Persistence.EFModel
         /// <summary>Estado de la orden.</summary>
         public EstadoOrden Estado { get; set; }
         /// <summary>Fecha de creación de la orden.</summary>
+        [Column(TypeName = "timestamp(6)")]
         public DateTime OrdenadaEn { get; set; }
         /// <summary>Productos que se ordenaron.</summary>
         public ICollection<EFProductoOrden> ProductosOrdenados { get; set; }

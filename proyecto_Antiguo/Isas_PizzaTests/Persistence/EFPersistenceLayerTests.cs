@@ -6,6 +6,7 @@ using Isas_Pizza.Persistence;
 using Isas_Pizza.Persistence.EFModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace Isas_PizzaTests.Persistence
 {
@@ -37,7 +38,7 @@ namespace Isas_PizzaTests.Persistence
         public void CreacionEFPersistenceLayerEnBaseDeDatosNoExistenteFalla()
         {
             Assert.Throws<PersistenceException>(
-                () => new EFPersistenceLayer("notfound.db")
+                () => new EFPersistenceLayer(new Dictionary<string,string>())
             );
         }
 
