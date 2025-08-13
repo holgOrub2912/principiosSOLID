@@ -1,6 +1,7 @@
 using System;
 using System.CommandLine;
 using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Diagnostics.Tracing;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -39,10 +40,12 @@ public class Pizzeria
         string dbPassword,
         IBlockingDisplayer<Producto> productoDp,
         IBlockingDisplayer<IngredienteEnStock> ingredienteDp,
-        IBlockingDisplayer<string> stringDp
+        IBlockingDisplayer<Orden> ordenDp,
+        IBlockingDisplayer<string> stringDp,
+        Func<IEnumerable<Ingrediente>, IBlockingPrompter<IngredienteEnStock>> ingredientePtGen,
+        Func<IEnumerable<Producto>, IBlockingPrompter<Orden>> ordenPtGen
     )
     {
-        this.productoDp = productoDp;
         this.auth = new GenericAuthenticator(new AuthPersistenceLayer(authFile), stringDp);
 
         EFPersistenceLayer dataStorage = new EFPersistenceLayer(new Dictionary<string,string>{
@@ -55,6 +58,13 @@ public class Pizzeria
         this.ingredientes = dataStorage;
         this.menu = dataStorage;
         this.ordenes = dataStorage;
+
+        this.productoDp = productoDp;
+        this.ingredienteDp = ingredienteDp;
+        this.ordenDp = ordenDp;
+
+        this.ingredientePt = ingredientePtGen(this.ingredientes.View(null));
+        this.ordenPt = ordenPtGen(this.menu.View(null));
     }
 
     public void LogIn(IBlockingPrompter<LoginCredentials?> prompter)
@@ -113,7 +123,6 @@ public class Pizzeria
         ParseResult cmdArgs = rootCommand.Parse(args);
 
         IBlockingPrompter<LoginCredentials?> loginPrompter = new CredentialPrompter();
-        IBlockingDisplayer<IngredienteEnStock> ingredienteDp = new IngredienteIO(new IngredienteEnStock[1]);
         PrimitiveIO defaultPrimitiveIO = new PrimitiveIO();
 
         IBlockingSelector menuSelector = new MenuGenericoIO();
@@ -125,9 +134,12 @@ public class Pizzeria
                 cmdArgs.GetValue(dbname),
                 cmdArgs.GetValue(dbuser),
                 cmdArgs.GetValue(dbpassword),
-                new ProductoIO([new Producto{}]),
-                ingredienteDp,
-                defaultPrimitiveIO
+                new ProductoIO(),
+                new IngredienteIO(menuSelector, []),
+                new OrdenIO(menuSelector, []),
+                new PrimitiveIO(),
+                ings => new IngredienteIO(menuSelector, ings),
+                prods => new OrdenIO(menuSelector, prods)
             );
             pizzeria.LogIn(loginPrompter);
             while (pizzeria.usuarioActivo is not null)
