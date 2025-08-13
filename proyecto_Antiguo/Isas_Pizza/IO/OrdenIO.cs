@@ -10,76 +10,59 @@ namespace Isas_Pizza.IO
     public class OrdenIO : IBlockingDisplayer<Orden>, IBlockingPrompter<Orden>
     {
 
-        private readonly ICollection<Orden> _ordenes;
-
-        public OrdenIO(ICollection<Orden> ordenes)
-        {
-            _ordenes = ordenes ?? throw new ArgumentNullException(nameof(ordenes));
-        }
-
+        private readonly MenuGenericoIO _menuGenerico = new MenuGenericoIO();
+        private static readonly Random _random = new Random();
         public Orden Ask(Orden? _)
         {
-            if (_ordenes.Count == 0)
-            {
-                throw new InvalidOperationException("No hay órdenes registradas");
-            }
+            // Asumo que `_` es la lista de productos disponibles
+            if (!(_ is ICollection<Producto> productosDisponibles))
+                throw new ArgumentException("El parámetro debe ser una colección de Producto");
 
-            Console.WriteLine("\n=== Búsqueda de Orden ===");
+            if (!productosDisponibles.Any())
+                throw new InvalidOperationException("No hay productos disponibles para seleccionar");
 
-            //Mostrar ordenes
-           
-            foreach (var orden in _ordenes.OrderByDescending(o => o.ordenadaEn).Take(5))
-            {
-                Console.WriteLine($"#{orden.numeroOrden} - {orden.estado.GetString()} - {orden.ordenadaEn:g}");
-            }
+            
+            var opciones = productosDisponibles
+                .Select(p => (
+                    $"{p.nombre}",  // Solo mostramos el nombre del producto
+                    p
+                ))
+                .ToList();
 
-            Orden ordenSeleccionada;
+            var productoSeleccionado = _menuGenerico.SelectOne(opciones);
+
+            
+            int cantidad;
             while (true)
             {
-                Console.Write("\nIngrese el número de orden: ");
-                string input = Console.ReadLine()?.Trim() ?? string.Empty;
-
-                // Validación del número de orden
-                var validationResults = new List<ValidationResult>();
-                var ordenTest = new Orden { numeroOrden = int.TryParse(input, out int num) ? num : -1 };
-                bool isValid = Validator.TryValidateProperty(
-                    ordenTest.numeroOrden,
-                    new ValidationContext(ordenTest) { MemberName = nameof(Orden.numeroOrden) },
-                    validationResults
-                );
-
-                if (!isValid)
-                {
-                    Console.WriteLine(
-                        "Se presentaron los siguientes errores:\n" +
-                        string.Join("\n", validationResults.Select(vr => vr.ErrorMessage))
-                    );
-                    continue;
-                }
-
-                // Buscar orden por número
-                ordenSeleccionada = _ordenes.FirstOrDefault(o =>
-                    o.numeroOrden == ordenTest.numeroOrden);
-
-                if (ordenSeleccionada != null)
-                {
+                Console.Write($"Cantidad (unidades): ");
+                if (int.TryParse(Console.ReadLine(), out cantidad) && cantidad > 0)
                     break;
-                }
-
-                Console.WriteLine("Orden no encontrada. Intente nuevamente.");
-                Console.WriteLine("Sugerencias (últimas 3 órdenes):");
-                var sugerencias = _ordenes
-                    .OrderByDescending(o => o.ordenadaEn)
-                    .Take(3);
-
-                foreach (var sug in sugerencias)
-                {
-                    Console.WriteLine($"- Orden #{sug.numeroOrden} ({sug.ordenadaEn:g})");
-                }
+                Console.WriteLine("Debe ser un entero positivo");
             }
 
-            return ordenSeleccionada;
+            // Crear la orden con el producto seleccionado
+            var nuevaOrden = new Orden
+            {
+                numeroOrden = _random.Next(1000, 9999), // se asigna aleatorio
+                estado = EstadoOrden.ORDENADA,
+                productosOrdenados = new List<(Producto producto, int cantidad)>
+                {
+                    (productoSeleccionado, cantidad)
+                },
+                ordenadaEn = DateTime.Now
+            };
+
+            // Validar la orden
+            var validationResults = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(nuevaOrden, new ValidationContext(nuevaOrden), validationResults, true))
+            {
+                throw new ValidationException(string.Join("\n", validationResults.Select(v => v.ErrorMessage)));
+            }
+
+            return nuevaOrden;
         }
+
 
         public void Display(ICollection<Orden> elements)
         {
