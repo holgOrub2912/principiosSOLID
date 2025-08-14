@@ -34,11 +34,11 @@ namespace Isas_Pizza.Persistence
             new EFIngrediente("Salami",
                               "Salami en rodajas",
                               Unidad.GRAMO),
-            new EFIngrediente("Piña",
-                              "Piña en trozos",
+            new EFIngrediente("PiÃ±a",
+                              "PiÃ±a en trozos",
                               Unidad.GRAMO),
-            new EFIngrediente("Champiñones",
-                              "Champiñones frescos",
+            new EFIngrediente("ChampiÃ±ones",
+                              "ChampiÃ±ones frescos",
                               Unidad.GRAMO),
             new EFIngrediente("Aceitunas",
                               "Aceitunas negras",
@@ -61,8 +61,8 @@ namespace Isas_Pizza.Persistence
             new EFIngrediente("Carne molida",
                               "Carne de res molida",
                               Unidad.GRAMO),
-            new EFIngrediente("Jamón",
-                              "Jamón cocido",
+            new EFIngrediente("JamÃ³n",
+                              "JamÃ³n cocido",
                               Unidad.GRAMO),
             new EFIngrediente("Salsa de tomate",
                               "Salsa de tomate para pizza",
@@ -165,7 +165,7 @@ namespace Isas_Pizza.Persistence
                     },
                     new EFIngredienteCantidad
                     {
-                        Ingrediente = ingredientes[13], // Orégano
+                        Ingrediente = ingredientes[13], // Orï¿½gano
                         Cantidad = 5
                     }
                 }
@@ -188,12 +188,12 @@ namespace Isas_Pizza.Persistence
                     },
                     new EFIngredienteCantidad
                     {
-                        Ingrediente = ingredientes[9], // Piña
+                        Ingrediente = ingredientes[9], // Piï¿½a
                         Cantidad = 200
                     },
                     new EFIngredienteCantidad
                     {
-                        Ingrediente = ingredientes[18], // Jamón
+                        Ingrediente = ingredientes[18], // Jamï¿½n
                         Cantidad = 150
                     },
                     new EFIngredienteCantidad
@@ -292,6 +292,110 @@ namespace Isas_Pizza.Persistence
                     }
                 }
             }
+        };
+
+        public static EFIngredienteEnStock[] existencias = new EFIngredienteEnStock[]
+        {
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[0],
+                Cantidad = 30,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[1],
+                Cantidad = 30,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[2],
+                Cantidad = 10000,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[3],
+                Cantidad = 1400,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[4],
+                Cantidad = 50,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[5],
+                Cantidad = 400,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[6],
+                Cantidad = 600,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[7],
+                Cantidad = 100,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[8],
+                Cantidad = 800,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[9],
+                Cantidad = 3000,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[10],
+                Cantidad = 5000,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[11],
+                Cantidad = 40,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[12],
+                Cantidad = 10,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[13],
+                Cantidad = 5600,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[14],
+                Cantidad = 13400,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[15],
+                Cantidad = 31000,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[16],
+                Cantidad = 2300,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[17],
+                Cantidad = 9000,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[18],
+                Cantidad = 5000,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
+            new EFIngredienteEnStock{
+                Ingrediente = ingredientes[19],
+                Cantidad = 4000,
+                FechaVencimiento = DateTime.Today.AddDays(100)
+            },
         };
     }
 }
