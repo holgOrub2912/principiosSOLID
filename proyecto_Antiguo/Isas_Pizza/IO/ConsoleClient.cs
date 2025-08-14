@@ -78,7 +78,7 @@ namespace Isas_Pizza.IO
                     menuSelector,
                     new ProductoIO(),
                     new IngredienteIO(menuSelector, []),
-                    new OrdenIO(menuSelector, []),
+                    new OrdenIO(menuSelector, () => []),
                     defaultPrimitiveIO,
                     ings => new IngredienteIO(menuSelector, ings),
                     prods => new OrdenIO(menuSelector, prods),

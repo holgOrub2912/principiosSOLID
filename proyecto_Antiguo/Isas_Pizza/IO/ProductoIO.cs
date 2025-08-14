@@ -20,14 +20,14 @@ namespace Isas_Pizza.IO
             foreach (var producto in elements)
             {
                 var ingredientes = producto.ingredientesRequeridos
-                    .Select(i => $"{i.cantidad} {i.ingrediente.unidad} de {i.ingrediente.nombre}");
+                    .Select(i => $"- {i.ingrediente.nombre}");
 
                 Console.WriteLine(
                     String.Format(
                         "{0,-" + maxNameLength.ToString() +"} {1,10}",
                         producto.nombre, producto.precio
                     ) +
-                    $"\nIngredientes: {string.Join(", ", ingredientes)}"
+                    $"\nIngredientes: {string.Join("\n", ingredientes)}"
                 );
             }
 

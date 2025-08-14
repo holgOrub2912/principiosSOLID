@@ -13,9 +13,10 @@ namespace Isas_Pizza
         [MenuOption("Ordenar")]
         public static void Ordenar(Pizzeria pizzeria)
         {
-            pizzeria.ordenes.Save([
-                pizzeria.ordenPt.Ask(null)
-            ]);
+            Orden orden = pizzeria.ordenPt.Ask(null);
+            if (orden.productosOrdenados.Count == 0)
+                return;
+            pizzeria.ordenes.Save([orden]);
         }
     }
 }

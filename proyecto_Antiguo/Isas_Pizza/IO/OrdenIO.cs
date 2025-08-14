@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Isas_Pizza.Persistence;
 
 namespace Isas_Pizza.IO
 {
@@ -11,24 +12,25 @@ namespace Isas_Pizza.IO
     {
 
         private readonly IBlockingSelector _menuGenerico;
-        private readonly IEnumerable<Producto> _productos;
-        private static readonly Random _random = new Random();
+        private readonly Func<IEnumerable<Producto>> _productGenerator;
 
-        public OrdenIO
-        (
+        public OrdenIO(
             IBlockingSelector menuGenerico,
-            IEnumerable<Producto> productos
+            Func<IEnumerable<Producto>> productGenerator
         )
         {
             this._menuGenerico = menuGenerico;
-            this._productos = productos;
+            this._productGenerator = productGenerator;
         }
         public Orden Ask(Orden? _)
         {
-            if (!this._productos.Any())
-                throw new InvalidOperationException("No hay productos disponibles para seleccionar");
+            IEnumerable<Producto> productos = _productGenerator();
+            if (!productos.Any()){
+                Console.WriteLine("Ups, no tenemos ninguna opción de nuestro menú disponible. Inténtalo más tarde.");
+                return new Orden();
+            }
             
-            var opciones = this._productos
+            var opciones = productos
                 .Select(p => (
                     $"{p.nombre}",  // Solo mostramos el nombre del producto
                     p

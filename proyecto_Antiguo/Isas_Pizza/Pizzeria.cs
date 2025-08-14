@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data.SqlTypes;
 using System.Diagnostics.Tracing;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using Isas_Pizza;
 using Isas_Pizza.IO;
@@ -49,7 +50,7 @@ public class Pizzeria
         IBlockingDisplayer<Orden> ordenDp,
         IBlockingDisplayer<string> stringDp,
         Func<IEnumerable<Ingrediente>, IIngEnStockPrompter> ingredientePtGen,
-        Func<IEnumerable<Producto>, IBlockingPrompter<Orden>> ordenPtGen,
+        Func<Func<IEnumerable<Producto>>, IBlockingPrompter<Orden>> ordenPtGen,
         IBlockingPrompter<int> intPt,
         IBlockingPrompter<double> doublePt
     )
@@ -76,7 +77,10 @@ public class Pizzeria
         this.doublePt = doublePt;
 
         this.ingredientePt = ingredientePtGen(this.ingredientes.View(null));
-        this.ordenPt = ordenPtGen(this.menu.View(null));
+        this.ordenPt = ordenPtGen(() => ProductMenu.AvailableProducts(
+            this.menu.View(null),
+            this.inventario.View(null)
+        ));
     }
     
     public void LogIn(IBlockingPrompter<LoginCredentials?> prompter)
