@@ -20,10 +20,13 @@ public class Pizzeria
 
     IAuthenticator auth { get; }
 
+    public IBlockingSelector selector { get; }
+
     public IBlockingPrompter<Orden> ordenPt { get; }
     public IBlockingPrompter<IngredienteEnStock> ingredientePt { get; }
     public IBlockingPrompter<int> intPt { get; }
 
+    public IBlockingDisplayer<string> stringDp { get; }
     public IBlockingDisplayer<Orden> ordenDp { get; }
     public IBlockingDisplayer<IngredienteEnStock> ingredienteDp { get; }
     public IBlockingDisplayer<Producto> productoDp { get; }
@@ -38,6 +41,7 @@ public class Pizzeria
         string dbName,
         string dbUser,
         string dbPassword,
+        IBlockingSelector selector,
         IBlockingDisplayer<Producto> productoDp,
         IBlockingDisplayer<IngredienteEnStock> ingredienteDp,
         IBlockingDisplayer<Orden> ordenDp,
@@ -59,9 +63,11 @@ public class Pizzeria
         this.menu = dataStorage;
         this.ordenes = dataStorage;
 
+        this.selector = selector;
         this.productoDp = productoDp;
         this.ingredienteDp = ingredienteDp;
         this.ordenDp = ordenDp;
+        this.stringDp = stringDp;
 
         this.ingredientePt = ingredientePtGen(this.ingredientes.View(null));
         this.ordenPt = ordenPtGen(this.menu.View(null));
