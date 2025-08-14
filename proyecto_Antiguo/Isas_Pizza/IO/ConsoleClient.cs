@@ -75,6 +75,7 @@ namespace Isas_Pizza.IO
                     cmdArgs.GetValue(dbname),
                     cmdArgs.GetValue(dbuser),
                     cmdArgs.GetValue(dbpassword),
+                    menuSelector,
                     new ProductoIO(),
                     new IngredienteIO(menuSelector, []),
                     new OrdenIO(menuSelector, []),

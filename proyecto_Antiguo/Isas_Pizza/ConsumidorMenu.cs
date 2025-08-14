@@ -9,5 +9,13 @@ namespace Isas_Pizza
                 pizzeria.menu.View(null).ToList()
             );
         }
+
+        [MenuOption("Ordenar")]
+        public static void Ordenar(Pizzeria pizzeria)
+        {
+            pizzeria.ordenes.Save([
+                pizzeria.ordenPt.Ask(null)
+            ]);
+        }
     }
 }

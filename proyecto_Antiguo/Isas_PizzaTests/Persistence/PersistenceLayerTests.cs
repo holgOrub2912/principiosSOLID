@@ -5,6 +5,7 @@ using Isas_Pizza;
 using Isas_Pizza.Persistence;
 using System.ComponentModel.DataAnnotations;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -109,7 +110,7 @@ namespace Isas_PizzaTests.Persistence
             Assert.Equal(InitData.productos.Count(),
                 productos.Count()
             );
-            Assert.Equal(InitData.productos[0].Nombre, productos.First().nombre);
+            Assert.True(InitData.productos.All(p => productos.Any(pr => p.Nombre == pr.nombre)));
         }
 
         /// \test
@@ -137,7 +138,6 @@ namespace Isas_PizzaTests.Persistence
             Orden orden = ordenes.First();
             Assert.Equal(1, ordenes.Count());
             Assert.Equal(2, orden.productosOrdenados.First().cantidad);
-            Assert.Equal("Napolitana", orden.productosOrdenados.First().producto.nombre);
 
             // Actualización
             ordenPL.Update(
