@@ -1,3 +1,5 @@
+using System.Drawing;
+
 namespace Isas_Pizza
 {
     public class ConsumidorMenu : UserMenu
@@ -16,7 +18,14 @@ namespace Isas_Pizza
             Orden orden = pizzeria.ordenPt.Ask(null);
             if (orden.productosOrdenados.Count == 0)
                 return;
+
             pizzeria.ordenes.Save([orden]);
         }
+
+        [MenuOption("Recibir orden")]
+        public static void Recibir(Pizzeria pizzeria)
+            => OrderManager.UpdateState(pizzeria,
+                                        EstadoOrden.LISTA,
+                                        EstadoOrden.ENTREGADA);
     }
 }

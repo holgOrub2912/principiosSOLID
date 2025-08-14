@@ -31,7 +31,7 @@ namespace Isas_Pizza.Persistence
             this._connectionString  = string.Join(";",
                 connectionOptions
                     .Select(item => $"{item.Key}={item.Value}")
-            );
+            ) + ";Pooling=false";
         }
         // public DbSet<EFIngredienteEnStock> IngredientesEnStock {get; set;}
 
@@ -113,7 +113,7 @@ namespace Isas_Pizza.Persistence
         /// <summary>
         /// Contexto de conexión a la base de datos
         /// </summary>
-        public EFContext _context;
+        private EFContext _context;
 
         public EFPersistenceLayer(IDictionary<string,string> dbOptions)
         {
@@ -151,9 +151,15 @@ namespace Isas_Pizza.Persistence
             {
                 this._context.Ordenes.RemoveRange(ordenes);
             }
+            ICollection<EFIngredienteEnStock> stock = this._context.IngredientesEnStock.ToList();
+            if (fromScratch || ordenes.Count > 0)
+            {
+                this._context.IngredientesEnStock.RemoveRange(stock);
+            }
             this._context.SaveChanges();
             this._context.Ingredientes.AddRange(InitData.ingredientes);
             this._context.Productos.AddRange(InitData.productos);
+            this._context.IngredientesEnStock.AddRange(InitData.existencias);
             this._context.SaveChanges();
         }
 
@@ -163,9 +169,12 @@ namespace Isas_Pizza.Persistence
                 .Select(ing => ing.Export());
 
         public IEnumerable<IngredienteEnStock> View(IngredienteEnStock? _)
-            => (IEnumerable<IngredienteEnStock>) this._context.IngredientesEnStock
+        {
+            return (IEnumerable<IngredienteEnStock>)this._context.IngredientesEnStock
+                .Include(ies => ies.Ingrediente) 
                 .ToList()
                 .Select(ing => ing.Export());
+        }
 
         public void Save(IEnumerable<IngredienteEnStock> ingredientesES)
         {
@@ -208,7 +217,12 @@ namespace Isas_Pizza.Persistence
                 .Select(p => p.Export());
 
         public IEnumerable<Orden> View(Orden? _)
-            => this._context.Ordenes.Include(o => o.ProductosOrdenados).Select(o => o.Export());
+        {
+            return this._context.Ordenes
+                .Include(o => o.ProductosOrdenados)
+                .ThenInclude(po => po.Producto)
+                .Select(o => o.Export());
+        }
         
         public void Save(IEnumerable<Orden> ordenes)
         {

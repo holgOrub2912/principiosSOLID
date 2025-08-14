@@ -67,7 +67,7 @@ namespace Isas_Pizza.Persistence.EFModel
         /// <summary>Convertir a IngredienteEnStock</summary>
         public IngredienteEnStock Export()
             => new IngredienteEnStock {
-                ingrediente = this.Ingrediente != null ? this.Ingrediente.Export() : null,
+                ingrediente = this.Ingrediente.Export(),
                 cantidad = this.Cantidad,
                 fechaVencimiento = this.FechaVencimiento
             };
