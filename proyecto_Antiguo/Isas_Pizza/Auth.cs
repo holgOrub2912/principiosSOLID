@@ -63,7 +63,7 @@ namespace Isas_Pizza
             if (credentials is null)
                 return new NonRegisteredUser();
             
-            RegisteredUser usuario = _userRegister.View(null).First(
+            RegisteredUser? usuario = _userRegister.View(null).FirstOrDefault(
                 u => u.id == credentials?.id &&
                     _hasher.Verify(credentials?.password, u.passwordHash)
             );
