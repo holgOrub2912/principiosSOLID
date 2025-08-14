@@ -35,7 +35,7 @@ namespace Isas_Pizza
         /// <summary>
         /// Lista de productos y cantidades por producto que el cliente ordenó.
         /// </summary>
-        [ProductosCantidadPositiva(ErrorMessage = "{0} debe tener cantidades positivas")]
+        [ProductosCantidadPositiva(ErrorMessage = "{0} está por fuera del rango permitido")]
         public ICollection<(Producto producto, int cantidad)> productosOrdenados {get; init;}
         /// <summary>
         /// Fecha/Hora en la cual se realizó la orden.
@@ -51,8 +51,9 @@ namespace Isas_Pizza
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
     public class ProductosCantidadPositivaAttribute : ValidationAttribute
     {
+        public const int maxProductosPorOrden = 100;
         public override bool IsValid(object productosOrdenados)
             => ((ICollection<(Producto producto, int cantidad)>) productosOrdenados)
-                .All(t => t.cantidad > 0);
+                .All(t => t.cantidad > 0 && t.cantidad <= maxProductosPorOrden);
     }
 }

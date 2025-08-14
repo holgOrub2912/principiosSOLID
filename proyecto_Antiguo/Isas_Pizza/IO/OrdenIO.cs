@@ -65,7 +65,8 @@ namespace Isas_Pizza.IO
             var validationResults = new List<ValidationResult>();
             if (!Validator.TryValidateObject(nuevaOrden, new ValidationContext(nuevaOrden), validationResults, true))
             {
-                throw new ValidationException(string.Join("\n", validationResults.Select(v => v.ErrorMessage)));
+                Console.WriteLine("Erroren la orden: " + string.Join("\n", validationResults.Select(v => v.ErrorMessage)));
+                return new Orden();
             }
 
             return nuevaOrden;
