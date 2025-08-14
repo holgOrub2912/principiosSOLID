@@ -46,6 +46,14 @@ namespace Isas_Pizza.Persistence
         {
             modelBuilder.Entity<EFProductoOrden>()
                 .HasKey(po => new { po.NombreProducto, po.NumeroOrden });
+            modelBuilder.Entity<EFOrden>()
+                .HasMany(o => o.ProductosOrdenados)
+                .WithOne(po => po.Orden)
+                .HasForeignKey(po => po.NumeroOrden);
+            modelBuilder.Entity<EFProductoOrden>()
+                .HasOne(po => po.Producto)
+                .WithMany()
+                .HasForeignKey(po => po.NombreProducto);
         }
 
     }
