@@ -203,11 +203,12 @@ namespace Isas_Pizza.Persistence
 
         public IEnumerable<Producto> View(Producto? _)
             => (IEnumerable<Producto>) this._context.Productos
+                .Include(p => p.IngredientesRequeridos)
                 .ToList()
                 .Select(p => p.Export());
 
         public IEnumerable<Orden> View(Orden? _)
-            => this._context.Ordenes.Select(o => o.Export());
+            => this._context.Ordenes.Include(o => o.ProductosOrdenados).Select(o => o.Export());
         
         public void Save(IEnumerable<Orden> ordenes)
         {
