@@ -54,7 +54,7 @@ namespace Isas_Pizza.IO
 
             DateTime fecha;
             while (!DateTime.TryParse(Console.ReadLine(), out fecha) || fecha <= DateTime.Today)
-                Console.WriteLine("Fecha futura (dd/mm/aaaa): ");
+                Console.WriteLine("Fecha futura (mm/dd/aaaa): ");
 
             var nuevoIngredienteStock = new IngredienteEnStock
             {
