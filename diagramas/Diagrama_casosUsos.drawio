@@ -1,0 +1,119 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" version="28.0.9">
+  <diagram name="Página-1" id="AgpNqbNMFJqH-Jol_Hba">
+    <mxGraphModel dx="1042" dy="562" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="HexusVjZV8E5QIdGBvdf-1" value="Administrador" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+          <mxGeometry x="160" y="320" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-2" value="Consumidor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="160" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-3" value="Chef" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+          <mxGeometry x="160" y="120" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-5" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="40" width="380" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-9" value="&lt;span style=&quot;font-family: Aptos, &amp;quot;Segoe UI&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; text-align: left; white-space-collapse: preserve;&quot;&gt;&lt;font&gt;Recibir órdenes&lt;/font&gt;&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="80" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;" edge="1" parent="1" source="HexusVjZV8E5QIdGBvdf-10" target="HexusVjZV8E5QIdGBvdf-26">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="440" y="320" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="420" y="165" />
+              <mxPoint x="420" y="300" />
+              <mxPoint x="520" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-10" value="&lt;span style=&quot;font-family: Aptos, &amp;quot;Segoe UI&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; text-align: left; white-space-collapse: preserve;&quot;&gt;&lt;font&gt;Validar órdenes&lt;/font&gt;&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="140" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-11" value="&lt;span style=&quot;font-family: Aptos, &amp;quot;Segoe UI&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; text-align: left; white-space-collapse: preserve;&quot;&gt;&lt;font&gt;Entregar órdenes&lt;/font&gt;&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="200" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;" edge="1" parent="1" source="HexusVjZV8E5QIdGBvdf-12" target="HexusVjZV8E5QIdGBvdf-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-12" value="&lt;div style=&quot;text-align: left;&quot;&gt;&lt;font face=&quot;Aptos, Segoe UI, Helvetica Neue, sans-serif&quot;&gt;&lt;span style=&quot;white-space-collapse: preserve;&quot;&gt;Agregar Ingrediente&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="330" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-13" value="&lt;span style=&quot;font-family: Aptos, &amp;quot;Segoe UI&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; text-align: left; white-space-collapse: preserve;&quot;&gt;&lt;font&gt;Poner órdenes&lt;/font&gt;&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="150" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" edge="1" parent="1" source="HexusVjZV8E5QIdGBvdf-9" target="HexusVjZV8E5QIdGBvdf-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="105" />
+              <mxPoint x="210" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" edge="1" parent="1" source="HexusVjZV8E5QIdGBvdf-10" target="HexusVjZV8E5QIdGBvdf-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" edge="1" parent="1" source="HexusVjZV8E5QIdGBvdf-11" target="HexusVjZV8E5QIdGBvdf-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="225" />
+              <mxPoint x="200" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.438;entryY=0.593;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" edge="1" parent="1" source="HexusVjZV8E5QIdGBvdf-12" target="HexusVjZV8E5QIdGBvdf-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.44;entryY=0.6;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" edge="1" parent="1" source="HexusVjZV8E5QIdGBvdf-13" target="HexusVjZV8E5QIdGBvdf-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-22" value="Pizzeria" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="480" y="440" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-23" value="&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; white-space-collapse: preserve;&quot;&gt;&lt;font face=&quot;Aptos, Segoe UI, Helvetica Neue, sans-serif&quot;&gt;Ver estado de orden&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="210" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;" edge="1" parent="1" source="HexusVjZV8E5QIdGBvdf-24" target="HexusVjZV8E5QIdGBvdf-26">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410" y="425" />
+              <mxPoint x="410" y="380" />
+              <mxPoint x="450" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-24" value="&lt;div style=&quot;text-align: left;&quot;&gt;&lt;font face=&quot;Aptos, Segoe UI, Helvetica Neue, sans-serif&quot;&gt;&lt;span style=&quot;white-space-collapse: preserve;&quot;&gt;Eliminar Ingrediente&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="260" y="400" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.52;entryY=0.617;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" edge="1" parent="1" source="HexusVjZV8E5QIdGBvdf-24" target="HexusVjZV8E5QIdGBvdf-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="425" />
+              <mxPoint x="220" y="370" />
+              <mxPoint x="176" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-26" value="&lt;div style=&quot;text-align: left;&quot;&gt;&lt;font face=&quot;Aptos, Segoe UI, Helvetica Neue, sans-serif&quot;&gt;&lt;span style=&quot;white-space-collapse: preserve;&quot;&gt;Actualizar inventario&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="350" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" edge="1" parent="1" source="HexusVjZV8E5QIdGBvdf-23" target="HexusVjZV8E5QIdGBvdf-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="235" />
+              <mxPoint x="640" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-35" value="&lt;i&gt;include&lt;/i&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="414" y="270" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="HexusVjZV8E5QIdGBvdf-36" value="&lt;i&gt;include&lt;/i&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="410" y="330" width="60" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
