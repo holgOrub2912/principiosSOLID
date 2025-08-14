@@ -192,9 +192,9 @@ namespace Isas_Pizza.Persistence.EFModel
         public int Cantidad { get; set; }
 
         /// <summary>Producto ordenado.</summary>
-        public EFProducto Producto { get; set; }
+        public EFProducto Producto { get; set; } = null!;
         /// <summary>Orden asociada.</summary>
-        public EFOrden Orden { get; set; }
+        public EFOrden Orden { get; set; } = null!;
     }
 
     /// <summary>
