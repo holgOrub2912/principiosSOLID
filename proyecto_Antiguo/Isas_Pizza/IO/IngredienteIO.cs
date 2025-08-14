@@ -10,7 +10,7 @@ using System.Net;
 
 namespace Isas_Pizza.IO
 {
-    public class IngredienteIO : IBlockingDisplayer<IngredienteEnStock>, IBlockingPrompter<IngredienteEnStock>
+    public class IngredienteIO : IBlockingDisplayer<IngredienteEnStock>, IIngEnStockPrompter
     {
 
         private readonly IBlockingSelector _menuGenerico;
@@ -27,20 +27,8 @@ namespace Isas_Pizza.IO
         }
         
 
-        public IngredienteEnStock Ask(IngredienteEnStock? _)
+        public IngredienteEnStock Ask(Ingrediente ingredienteSeleccionado)
         {
-
-            if (!this._ingredientes.Any())
-                throw new InvalidOperationException("No hay ingredientes disponibles para seleccionar");
-
-            var opciones = this._ingredientes
-                .Select(ing => (
-                    $"{ing.nombre} ({ing.unidad.GetString(false)})", 
-                    ing
-                ))
-                .ToList();
-
-            var ingredienteSeleccionado = _menuGenerico.SelectOne(opciones);
 
             double cantidad;
             while (true)
@@ -77,7 +65,12 @@ namespace Isas_Pizza.IO
             Console.WriteLine("=== Ingredientes ===");
             foreach (var ingrediente in elements)
             {
-                Console.WriteLine($"- {ingrediente.ingrediente.nombre}, Vence: {ingrediente.fechaVencimiento:d}");
+                Console.WriteLine(String.Format("- {0,20} (x{1,6} {2,10}) Vence: {3}",
+                    ingrediente.ingrediente.nombre,
+                    ingrediente.cantidad,
+                    ingrediente.ingrediente.unidad.GetString(ingrediente.cantidad == 1),
+                    ingrediente.fechaVencimiento.ToShortDateString()
+                ));
             }
         }
         

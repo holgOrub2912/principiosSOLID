@@ -23,13 +23,15 @@ public class Pizzeria
     public IBlockingSelector selector { get; }
 
     public IBlockingPrompter<Orden> ordenPt { get; }
-    public IBlockingPrompter<IngredienteEnStock> ingredientePt { get; }
+    public IIngEnStockPrompter ingredientePt { get; }
     public IBlockingPrompter<int> intPt { get; }
+    public IBlockingPrompter<double> doublePt { get; }
 
     public IBlockingDisplayer<string> stringDp { get; }
     public IBlockingDisplayer<Orden> ordenDp { get; }
     public IBlockingDisplayer<IngredienteEnStock> ingredienteDp { get; }
     public IBlockingDisplayer<Producto> productoDp { get; }
+
 
     /// <summary>
     /// Inicializar capa de persistencia e interfaz.
@@ -46,8 +48,10 @@ public class Pizzeria
         IBlockingDisplayer<IngredienteEnStock> ingredienteDp,
         IBlockingDisplayer<Orden> ordenDp,
         IBlockingDisplayer<string> stringDp,
-        Func<IEnumerable<Ingrediente>, IBlockingPrompter<IngredienteEnStock>> ingredientePtGen,
-        Func<IEnumerable<Producto>, IBlockingPrompter<Orden>> ordenPtGen
+        Func<IEnumerable<Ingrediente>, IIngEnStockPrompter> ingredientePtGen,
+        Func<IEnumerable<Producto>, IBlockingPrompter<Orden>> ordenPtGen,
+        IBlockingPrompter<int> intPt,
+        IBlockingPrompter<double> doublePt
     )
     {
         this.auth = new GenericAuthenticator(new AuthPersistenceLayer(authFile), stringDp);
@@ -68,6 +72,8 @@ public class Pizzeria
         this.ingredienteDp = ingredienteDp;
         this.ordenDp = ordenDp;
         this.stringDp = stringDp;
+        this.intPt = intPt;
+        this.doublePt = doublePt;
 
         this.ingredientePt = ingredientePtGen(this.ingredientes.View(null));
         this.ordenPt = ordenPtGen(this.menu.View(null));

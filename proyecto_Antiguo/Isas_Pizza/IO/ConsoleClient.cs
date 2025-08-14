@@ -79,9 +79,11 @@ namespace Isas_Pizza.IO
                     new ProductoIO(),
                     new IngredienteIO(menuSelector, []),
                     new OrdenIO(menuSelector, []),
-                    new PrimitiveIO(),
+                    defaultPrimitiveIO,
                     ings => new IngredienteIO(menuSelector, ings),
-                    prods => new OrdenIO(menuSelector, prods)
+                    prods => new OrdenIO(menuSelector, prods),
+                    defaultPrimitiveIO,
+                    defaultPrimitiveIO
                 );
 
                 pizzeria.LogIn(loginPrompter);
