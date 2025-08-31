@@ -17,8 +17,8 @@ namespace Isas_Pizza
         [MenuOption("Agregar a inventario")]
         public static void AgregarAStock(Pizzeria pizzeria)
         {
-            pizzeria.stringDp.Display(["Seleccione el ingrediente que quiere agregar:"]);
             Ingrediente ingrediente = pizzeria.selector.SelectOne<Ingrediente>(
+                "Seleccione el ingrediente que quiere agregar:",
                 pizzeria.ingredientes
                     .View(null)
                     .Select(i => (i.nombre, i))

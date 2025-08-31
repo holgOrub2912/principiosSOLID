@@ -14,6 +14,13 @@ namespace Isas_Pizza.IO
         /// (etiqueta, opcion)</param>
         /// <returns>Opción seleccionada</returns>
         public T SelectOne<T>(ICollection<(string label, T option)> options);
+        /// <summary>
+        /// Preguntarle al usuario cuál de las opciones seleccionar, mostrando title como título.
+        /// </summary>
+        /// <param name="options">Coleccion de tuplas de la forma
+        /// (etiqueta, opcion)</param>
+        /// <param name="title">Título del menú</param>
+        public T SelectOne<T>(string title, ICollection<(string label, T option)> options);
     }
 
     /// \todo Implementar esta interfaz para Orden, IngredienteEnStock y Producto

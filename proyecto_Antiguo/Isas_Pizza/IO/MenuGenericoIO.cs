@@ -8,12 +8,12 @@ namespace Isas_Pizza.IO
 {
     public class MenuGenericoIO: IBlockingSelector
     {
-        public T SelectOne<T>(ICollection<(string label, T option)> options)
+        public T SelectOne<T>(string title, ICollection<(string label, T option)> options)
     {
         if (options == null || options.Count == 0)
             throw new ArgumentException("No hay opciones para seleccionar");
 
-        Console.WriteLine("\n=== Seleccione una opción ===");
+        Console.WriteLine($"\n=== {title} ===");
 
         int index = 1;
         foreach (var (label, _) in options)
@@ -38,5 +38,7 @@ namespace Isas_Pizza.IO
         return options.ElementAt(selectedIndex - 1).option;
     }
 
+        public T SelectOne<T>(ICollection<(string label, T option)> options)
+            => SelectOne("Seleccione una opción", options);
 }
 }
