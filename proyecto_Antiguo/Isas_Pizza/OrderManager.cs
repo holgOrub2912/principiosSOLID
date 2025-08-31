@@ -4,22 +4,9 @@ namespace Isas_Pizza
     {
         public static void UpdateState(Pizzeria pizzeria, EstadoOrden from, EstadoOrden to)
         {
-            IEnumerable<Orden> ordenesListas = pizzeria.ordenes
-                    .View(null)
-                    .ToList()
-                    .FindAll(o => o.estado == from);
-
-            if (!ordenesListas.Any()){
-                pizzeria.stringDp.Display(["No hay órdenes disponibles."]);
+            Orden? toUpdate = GetWithState(pizzeria, from);
+            if (toUpdate is null)
                 return;
-            }
-
-            Orden toUpdate = pizzeria.selector.SelectOne(ordenesListas
-                .Select(o => (string.Join(", ", o.productosOrdenados
-                    .Select(t => $"{t.producto.nombre} x{t.cantidad}")
-                    ), o))
-                .ToList()
-            );
 
             pizzeria.ordenes.Update(toUpdate, new Orden {
                 numeroOrden = toUpdate.numeroOrden,
@@ -27,6 +14,25 @@ namespace Isas_Pizza
                 estado = to,
                 ordenadaEn = toUpdate.ordenadaEn
             });
+        }
+        public static Orden? GetWithState(Pizzeria pizzeria, EstadoOrden targetState)
+        {
+            IEnumerable<Orden> ordenesListas = pizzeria.ordenes
+                    .View(null)
+                    .ToList()
+                    .FindAll(o => o.estado == targetState);
+
+            if (!ordenesListas.Any()){
+                pizzeria.stringDp.Display(["No hay órdenes disponibles."]);
+                return null;
+            }
+
+            return pizzeria.selector.SelectOne(ordenesListas
+                .Select(o => (string.Join(", ", o.productosOrdenados
+                    .Select(t => $"{t.producto.nombre} x{t.cantidad}")
+                    ), o))
+                .ToList()
+            );
         }
     }
 }

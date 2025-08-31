@@ -15,21 +15,10 @@ namespace Isas_Pizza
         [MenuOption("Cocinar una órden")]
         public static void CocinarOrden(Pizzeria pizzeria)
         {
-            IEnumerable<(string, Orden)> orderOpts = pizzeria.ordenes
-                .View(null)
-                .ToList()
-                .FindAll(o => o.estado == EstadoOrden.ORDENADA)
-                .Select(o => (string.Join(", ", o.productosOrdenados
-                        .Select(t => $"{t.producto.nombre} x{t.cantidad}")
-                     ), o))
-                .ToList();
-
-            if (!orderOpts.Any()){
-                pizzeria.stringDp.Display(["No hay órdenes disponibles."]);
+            Orden? posibleOrden = OrderManager.GetWithState(pizzeria, EstadoOrden.ORDENADA);
+            if (posibleOrden is null)
                 return;
-            }
-
-            Orden ordenACocinar = pizzeria.selector.SelectOne(orderOpts.ToArray());
+            Orden ordenACocinar = posibleOrden;
 
             Dictionary<string, IngredienteEnStock> invArr
                 = pizzeria.inventario.View(null).ToDictionary(ies => ies.ingrediente.nombre);
