@@ -29,21 +29,12 @@ namespace Isas_Pizza
                 .FirstOrDefault(ies =>
                     ies.ingrediente.nombre == ingrediente.nombre
                 );
-
+            
             if (toUpdate is not null)
             {
-                pizzeria.stringDp.Display([$"¿Qué cantidad desea agregar? ({ingrediente.unidad.GetString(false)})"]);
-                double cantidad = ingrediente.unidad == Unidad.UNIDAD
-                    ? pizzeria.intPt.Ask(0)
-                    : pizzeria.doublePt.Ask(0.0);
-
                 pizzeria.inventario.Update(
                     toUpdate,
-                    new IngredienteEnStock {
-                        ingrediente = ingrediente,
-                        cantidad = toUpdate.cantidad + cantidad,
-                        fechaVencimiento = toUpdate.fechaVencimiento
-                    }
+                    pizzeria.ingredientePt.Ask(toUpdate)
                 );
             }
             else

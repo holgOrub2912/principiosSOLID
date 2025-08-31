@@ -60,6 +60,47 @@ namespace Isas_Pizza.IO
             return nuevoIngredienteStock;
         }
 
+        public IngredienteEnStock Ask(IngredienteEnStock ies)
+        {
+            Ingrediente ingredienteSeleccionado = ies.ingrediente;
+            double cantidad;
+            while (true)
+            {
+                Console.Write("Cantidad a adicionar "
+                    + $"(Ya hay {ies.cantidad} "
+                    + $"{ingredienteSeleccionado.unidad.GetString(ies.cantidad == 1)} en stock): ");
+                if (double.TryParse(Console.ReadLine(), out cantidad) && cantidad > 0 &&
+                    (ingredienteSeleccionado.unidad != Unidad.UNIDAD || cantidad == (int)cantidad)) break;
+                Console.WriteLine(ingredienteSeleccionado.unidad == Unidad.UNIDAD ?
+                    "Debe ser entero positivo" : "Debe ser número positivo");
+            }
+
+            DateTime fecha;
+            string input;
+            do {
+                fecha = ies.fechaVencimiento;
+                Console.WriteLine($"Fecha futura (mm/dd/aaaa) [vacio para ({fecha.ToShortDateString()})]: ");
+                input = Console.ReadLine();
+                if (string.IsNullOrEmpty(input))
+                    break;
+            } while (!DateTime.TryParse(input, out fecha) || fecha <= DateTime.Today);
+
+            var nuevoIngredienteStock = new IngredienteEnStock
+            {
+                ingrediente = ingredienteSeleccionado,
+                cantidad = ies.cantidad + cantidad,
+                fechaVencimiento = fecha
+            };
+
+            var validationResults = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(nuevoIngredienteStock, new ValidationContext(nuevoIngredienteStock), validationResults, true))
+            {
+                throw new ValidationException(string.Join("\n", validationResults.Select(v => v.ErrorMessage)));
+            }
+
+            return nuevoIngredienteStock;
+        }
+
         public void Display(ICollection<IngredienteEnStock> elements)
         {
             Console.WriteLine("=== Ingredientes ===");
