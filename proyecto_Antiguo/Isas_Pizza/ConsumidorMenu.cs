@@ -7,7 +7,7 @@ namespace Isas_Pizza
         [MenuOption("Ver Menú")]
         public static void VerMenu(Pizzeria pizzeria)
         {
-            pizzeria.productoDp.Display(
+            pizzeria.io.Display(
                 pizzeria.menu.View(null).ToList()
             );
         }
@@ -15,7 +15,7 @@ namespace Isas_Pizza
         [MenuOption("Ordenar")]
         public static void Ordenar(Pizzeria pizzeria)
         {
-            Orden orden = pizzeria.ordenPt.Ask(null);
+            Orden orden = pizzeria.io.AskOrden();
             if (orden.productosOrdenados is null)
                 return;
 

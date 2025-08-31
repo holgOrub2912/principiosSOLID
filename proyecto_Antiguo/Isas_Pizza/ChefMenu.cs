@@ -7,7 +7,7 @@ namespace Isas_Pizza
         [MenuOption("Ver Órdenes")]
         public static void VerOrdenes(Pizzeria pizzeria)
         {
-            pizzeria.ordenDp.Display(
+            pizzeria.io.Display(
                 pizzeria.ordenes.View(null).ToArray()
             );
         }
@@ -35,7 +35,7 @@ namespace Isas_Pizza
                         - ingCant.cantidad * prodCant;
                         
                     if (resultantQty < 0){
-                        pizzeria.stringDp.Display([
+                        pizzeria.io.Display([
                             $"No es posible cocinar esta orden - hace falta {ingCant.ingrediente.nombre}"
                         ]);
                         return;
@@ -62,7 +62,7 @@ namespace Isas_Pizza
                 ordenadaEn = ordenACocinar.ordenadaEn
             });
 
-            pizzeria.stringDp.Display(["Cocinando ..."]);
+            pizzeria.io.Display(["Cocinando ..."]);
         }
 
         [MenuOption("Despachar orden")]

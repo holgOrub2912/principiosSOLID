@@ -9,7 +9,7 @@ namespace Isas_Pizza
         [MenuOption("Ver inventario")]
         public static void VerInventario(Pizzeria pizzeria)
         {
-            pizzeria.ingredienteDp.Display(
+            pizzeria.io.Display(
                 pizzeria.inventario.View(null).ToArray()
             );
         }
@@ -17,7 +17,7 @@ namespace Isas_Pizza
         [MenuOption("Agregar a inventario")]
         public static void AgregarAStock(Pizzeria pizzeria)
         {
-            Ingrediente ingrediente = pizzeria.selector.SelectOne<Ingrediente>(
+            Ingrediente ingrediente = pizzeria.io.SelectOne(
                 "Seleccione el ingrediente que quiere agregar:",
                 pizzeria.ingredientes
                     .View(null)
@@ -34,11 +34,11 @@ namespace Isas_Pizza
             {
                 pizzeria.inventario.Update(
                     toUpdate,
-                    pizzeria.ingredientePt.Ask(toUpdate)
+                    pizzeria.io.Ask(toUpdate)
                 );
             }
             else
-                pizzeria.inventario.Save([pizzeria.ingredientePt.Ask(ingrediente)]);
+                pizzeria.inventario.Save([pizzeria.io.Ask(ingrediente)]);
         }
     }
 }

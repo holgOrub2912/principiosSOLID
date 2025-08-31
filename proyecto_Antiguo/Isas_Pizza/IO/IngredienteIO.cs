@@ -13,16 +13,13 @@ namespace Isas_Pizza.IO
     public class IngredienteIO : IBlockingDisplayer<IngredienteEnStock>, IIngEnStockPrompter
     {
 
-        private readonly IBlockingSelector _menuGenerico;
         private readonly IEnumerable<Ingrediente> _ingredientes;
 
         public IngredienteIO
         (
-            IBlockingSelector menuGenerico,
             IEnumerable<Ingrediente> ingredientes
         )
         {
-            this._menuGenerico = menuGenerico;
             this._ingredientes = ingredientes;
         }
         

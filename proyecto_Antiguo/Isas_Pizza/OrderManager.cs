@@ -23,11 +23,11 @@ namespace Isas_Pizza
                     .FindAll(o => o.estado == targetState);
 
             if (!ordenesListas.Any()){
-                pizzeria.stringDp.Display(["No hay órdenes disponibles."]);
+                pizzeria.io.Display(["No hay órdenes disponibles."]);
                 return null;
             }
 
-            return pizzeria.selector.SelectOne(ordenesListas
+            return pizzeria.io.SelectOne(ordenesListas
                 .Select(o => (string.Join(", ", o.productosOrdenados
                     .Select(t => $"{t.producto.nombre} x{t.cantidad}")
                     ), o))

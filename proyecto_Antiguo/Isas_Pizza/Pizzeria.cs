@@ -20,6 +20,7 @@ public class Pizzeria
     public IUserAgent? usuarioActivo { get; private set; } = null;
 
     IAuthenticator auth { get; }
+    public IIOFacade io { get; }
 
     public IBlockingSelector selector { get; }
 
@@ -44,15 +45,7 @@ public class Pizzeria
         string dbName,
         string dbUser,
         string dbPassword,
-        IBlockingSelector selector,
-        IBlockingDisplayer<Producto> productoDp,
-        IBlockingDisplayer<IngredienteEnStock> ingredienteDp,
-        IBlockingDisplayer<Orden> ordenDp,
-        IBlockingDisplayer<string> stringDp,
-        Func<IEnumerable<Ingrediente>, IIngEnStockPrompter> ingredientePtGen,
-        Func<Func<IEnumerable<Producto>>, IBlockingPrompter<Orden>> ordenPtGen,
-        IBlockingPrompter<int> intPt,
-        IBlockingPrompter<double> doublePt
+        Func<Pizzeria, IIOFacade> ioFacadeGen
     )
     {
         this.auth = new GenericAuthenticator(new AuthPersistenceLayer(authFile), stringDp);
@@ -68,19 +61,16 @@ public class Pizzeria
         this.menu = dataStorage;
         this.ordenes = dataStorage;
 
-        this.selector = selector;
-        this.productoDp = productoDp;
-        this.ingredienteDp = ingredienteDp;
-        this.ordenDp = ordenDp;
-        this.stringDp = stringDp;
-        this.intPt = intPt;
-        this.doublePt = doublePt;
+        io = ioFacadeGen(this);
 
-        this.ingredientePt = ingredientePtGen(this.ingredientes.View(null));
-        this.ordenPt = ordenPtGen(() => ProductMenu.AvailableProducts(
-            this.menu.View(null),
-            this.inventario.View(null)
-        ));
+        this.selector = io;
+        this.productoDp = io;
+        this.ingredienteDp = io;
+        this.ordenDp = io;
+        this.stringDp = io;
+
+        this.ingredientePt = io;
+        this.ordenPt = io;
     }
     
     public void LogIn(IBlockingPrompter<LoginCredentials?> prompter)

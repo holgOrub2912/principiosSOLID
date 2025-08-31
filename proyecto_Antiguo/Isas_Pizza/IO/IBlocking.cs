@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Isas_Pizza.IO
 {
     /// \todo Implementar esta interfaz
@@ -53,4 +55,21 @@ namespace Isas_Pizza.IO
         public T Ask(T? _);
         //cambio de interfaz por problema de ambigüedad con el parámetro genérico T
     }
+
+    /// <summary>
+    /// Representa una fachada para manejar la entrada y salida de
+    /// datos con el usuario
+    /// </summary>
+    public interface IIOFacade :
+        IBlockingSelector,
+        IBlockingPrompter<LoginCredentials?>,
+        IBlockingPrompter<Orden>,
+        IIngEnStockPrompter,
+        IBlockingDisplayer<string>,
+        IBlockingDisplayer<Orden>,
+        IBlockingDisplayer<IngredienteEnStock>,
+        IBlockingDisplayer<Producto>
+    {
+        public Orden AskOrden() => Ask((Orden?) null);
+    } 
 }

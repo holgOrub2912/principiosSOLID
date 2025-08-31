@@ -75,15 +75,7 @@ namespace Isas_Pizza.IO
                     cmdArgs.GetValue(dbname),
                     cmdArgs.GetValue(dbuser),
                     cmdArgs.GetValue(dbpassword),
-                    menuSelector,
-                    new ProductoIO(),
-                    new IngredienteIO(menuSelector, []),
-                    new OrdenIO(menuSelector, () => []),
-                    defaultPrimitiveIO,
-                    ings => new IngredienteIO(menuSelector, ings),
-                    prods => new OrdenIO(menuSelector, prods),
-                    defaultPrimitiveIO,
-                    defaultPrimitiveIO
+                    pizzeria => new ConsoleFacade(pizzeria)
                 );
 
                 pizzeria.LogIn(loginPrompter);
