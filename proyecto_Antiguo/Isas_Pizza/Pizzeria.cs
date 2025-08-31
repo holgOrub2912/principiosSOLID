@@ -12,28 +12,15 @@ using Isas_Pizza.Persistence;
 
 public class Pizzeria
 {
-    public IROPersistenceLayer<Ingrediente> ingredientes { get; }
-    public IPersistenceLayer<IngredienteEnStock> inventario { get; }
-    public IROPersistenceLayer<Producto> menu { get; }
-    public IPersistenceLayer<Orden> ordenes { get; }
+    public IROPersistenceLayer<Ingrediente> ingredientes => EFPersistenceLayer.Instance;
+    public IPersistenceLayer<IngredienteEnStock> inventario => EFPersistenceLayer.Instance;
+    public IROPersistenceLayer<Producto> menu => EFPersistenceLayer.Instance;
+    public IPersistenceLayer<Orden> ordenes => EFPersistenceLayer.Instance;
 
     public IUserAgent? usuarioActivo { get; private set; } = null;
 
     IAuthenticator auth { get; }
     public IIOFacade io { get; }
-
-    public IBlockingSelector selector { get; }
-
-    public IBlockingPrompter<Orden> ordenPt { get; }
-    public IIngEnStockPrompter ingredientePt { get; }
-    public IBlockingPrompter<int> intPt { get; }
-    public IBlockingPrompter<double> doublePt { get; }
-
-    public IBlockingDisplayer<string> stringDp { get; }
-    public IBlockingDisplayer<Orden> ordenDp { get; }
-    public IBlockingDisplayer<IngredienteEnStock> ingredienteDp { get; }
-    public IBlockingDisplayer<Producto> productoDp { get; }
-
 
     /// <summary>
     /// Inicializar capa de persistencia e interfaz.
@@ -48,29 +35,15 @@ public class Pizzeria
         Func<Pizzeria, IIOFacade> ioFacadeGen
     )
     {
-        this.auth = new GenericAuthenticator(new AuthPersistenceLayer(authFile), stringDp);
-
-        EFPersistenceLayer dataStorage = new EFPersistenceLayer(new Dictionary<string,string>{
+        EFPersistenceLayer.Init(new Dictionary<string,string>{
             {"Host", dbServer},
             {"Database", dbName},
             {"Username", dbUser},
             {"Password", dbPassword},
         });
-        this.inventario = dataStorage;
-        this.ingredientes = dataStorage;
-        this.menu = dataStorage;
-        this.ordenes = dataStorage;
-
         io = ioFacadeGen(this);
 
-        this.selector = io;
-        this.productoDp = io;
-        this.ingredienteDp = io;
-        this.ordenDp = io;
-        this.stringDp = io;
-
-        this.ingredientePt = io;
-        this.ordenPt = io;
+        this.auth = new GenericAuthenticator(new AuthPersistenceLayer(authFile), io);
     }
     
     public void LogIn(IBlockingPrompter<LoginCredentials?> prompter)
@@ -96,10 +69,14 @@ public class Pizzeria
         string dbName,
         string dbUser,
         string dbPassword
-    ) => new EFPersistenceLayer(new Dictionary<string,string>{
+    )
+    {
+        EFPersistenceLayer.Init(new Dictionary<string, string>{
             {"Host", dbServer},
             {"Database", dbName},
             {"Username", dbUser},
             {"Password", dbPassword},
-        }).initData(true);
+        });
+        EFPersistenceLayer.Instance.initData(true);
+    }
 }

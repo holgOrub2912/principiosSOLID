@@ -9,6 +9,7 @@ using System.Diagnostics.Contracts;
 using System.ComponentModel;
 using Microsoft.Extensions.Options;
 using System.CommandLine;
+using System.Globalization;
 
 namespace Isas_Pizza.Persistence
 {
@@ -115,7 +116,15 @@ namespace Isas_Pizza.Persistence
         /// </summary>
         private EFContext _context;
 
-        public EFPersistenceLayer(IDictionary<string,string> dbOptions)
+        public static EFPersistenceLayer Instance { get; private set; }
+
+        public static void Init(IDictionary<string,string> dbOptions)
+        {
+            Instance = new EFPersistenceLayer(dbOptions);
+        }
+
+
+        private EFPersistenceLayer(IDictionary<string,string> dbOptions)
         {
             this._context = new EFContext(dbOptions);
             // Verificar la integridad de la base de datos
@@ -219,6 +228,7 @@ namespace Isas_Pizza.Persistence
         public IEnumerable<Orden> View(Orden? _)
         {
             return this._context.Ordenes
+                .AsNoTracking()
                 .Include(o => o.ProductosOrdenados)
                 .ThenInclude(po => po.Producto)
                 .Select(o => o.Export());
