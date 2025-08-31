@@ -120,7 +120,10 @@ namespace Isas_Pizza.Persistence
 
         public static void Init(IDictionary<string,string> dbOptions)
         {
-            Instance = new EFPersistenceLayer(dbOptions);
+            if (Instance is null)
+                Instance = new EFPersistenceLayer(dbOptions);
+            else
+                throw new InvalidOperationException("Tratando de inicializar EFPersistenceLayer más de una vez");
         }
 
 
@@ -180,6 +183,7 @@ namespace Isas_Pizza.Persistence
         public IEnumerable<IngredienteEnStock> View(IngredienteEnStock? _)
         {
             return (IEnumerable<IngredienteEnStock>)this._context.IngredientesEnStock
+                .AsNoTracking()
                 .Include(ies => ies.Ingrediente) 
                 .ToList()
                 .Select(ing => ing.Export());
@@ -231,6 +235,8 @@ namespace Isas_Pizza.Persistence
                 .AsNoTracking()
                 .Include(o => o.ProductosOrdenados)
                 .ThenInclude(po => po.Producto)
+                .ThenInclude(p => p.IngredientesRequeridos)
+                .ThenInclude(ic => ic.Ingrediente)
                 .Select(o => o.Export());
         }
         
