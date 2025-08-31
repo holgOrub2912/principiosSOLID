@@ -9,8 +9,6 @@ namespace Isas_Pizza
                     .ToList()
                     .FindAll(o => o.estado == from);
 
-            Console.WriteLine(ordenesListas.FirstOrDefault());
-
             if (!ordenesListas.Any()){
                 pizzeria.stringDp.Display(["No hay órdenes disponibles."]);
                 return;
