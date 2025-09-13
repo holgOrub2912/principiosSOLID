@@ -16,7 +16,7 @@ public class Pizzeria
 {
     public IROPersistenceLayer<Ingrediente> ingredientes => EFPersistenceLayer.Instance;
     public IPersistenceLayer<IngredienteEnStock> inventario => EFPersistenceLayer.Instance;
-    public IPersistenceLayer<Producto> menu => EFPersistenceLayer.Instance;
+    public IPersistenceLayer<Producto> menu;
     public IPersistenceLayer<Orden> ordenes => EFPersistenceLayer.Instance;
 
     public IUserAgent? usuarioActivo { get; private set; } = null;
@@ -44,6 +44,10 @@ public class Pizzeria
             {"Password", dbPassword},
         });
         io = ioFacadeGen(this);
+        menu = new MenuFilter(
+            EFPersistenceLayer.Instance,
+            EFPersistenceLayer.Instance
+        );
 
         this.auth = new GenericAuthenticator(new AuthPersistenceLayer(authFile), io);
     }
