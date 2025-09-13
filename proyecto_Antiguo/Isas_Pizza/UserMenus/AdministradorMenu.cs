@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Isas_Pizza
+namespace Isas_Pizza.UserMenus
 {
     public class AdministradorMenu : UserMenu
     {

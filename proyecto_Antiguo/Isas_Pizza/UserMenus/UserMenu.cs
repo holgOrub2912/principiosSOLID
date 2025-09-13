@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Isas_Pizza
+namespace Isas_Pizza.UserMenus
 {
     /// <summary>
     /// Representa un conjunto de acciones que un usuario puede realizar.

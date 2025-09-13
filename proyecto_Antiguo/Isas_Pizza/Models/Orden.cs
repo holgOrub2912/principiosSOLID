@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Globalization;
 
-namespace Isas_Pizza
+namespace Isas_Pizza.Models
 {
     public enum EstadoOrden
     {

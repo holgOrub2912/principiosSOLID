@@ -1,4 +1,5 @@
 using Isas_Pizza;
+using Isas_Pizza.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;

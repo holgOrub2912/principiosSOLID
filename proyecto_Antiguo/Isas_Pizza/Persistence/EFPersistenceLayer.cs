@@ -1,4 +1,5 @@
 using Isas_Pizza;
+using Isas_Pizza.Models;
 using Isas_Pizza.Persistence.EFModel;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;

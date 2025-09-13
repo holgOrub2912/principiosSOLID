@@ -1,3 +1,4 @@
+using Isas_Pizza.Models;
 
 namespace Isas_Pizza.IO {
     public class ConsoleFacade: IIOFacade

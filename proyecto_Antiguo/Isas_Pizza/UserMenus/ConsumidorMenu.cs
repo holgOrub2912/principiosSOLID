@@ -1,6 +1,7 @@
 using System.Drawing;
+using Isas_Pizza.Models;
 
-namespace Isas_Pizza
+namespace Isas_Pizza.UserMenus
 {
     public class ConsumidorMenu : UserMenu
     {

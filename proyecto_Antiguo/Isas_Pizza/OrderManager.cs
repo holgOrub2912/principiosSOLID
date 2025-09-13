@@ -1,3 +1,5 @@
+using Isas_Pizza.Models;
+
 namespace Isas_Pizza
 {
     public static class OrderManager
