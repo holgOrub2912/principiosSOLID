@@ -228,6 +228,7 @@ namespace Isas_Pizza.Persistence
         public IEnumerable<Producto> View(Producto? _)
             => (IEnumerable<Producto>) this._context.Productos
                 .Include(p => p.IngredientesRequeridos)
+                .ThenInclude(ingreq => ingreq.Ingrediente)
                 .ToList()
                 .Select(p => p.Export());
 
