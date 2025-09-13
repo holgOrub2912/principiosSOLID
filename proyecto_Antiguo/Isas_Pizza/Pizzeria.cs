@@ -57,9 +57,9 @@ public class Pizzeria
         this.usuarioActivo = auth.Authenticate(prompter);
     }
     public IEnumerable<(string label, Action<Pizzeria>)> Menu()
-        => usuarioActivo.GetMenu()
+        => usuarioActivo?.GetMenu()
                         .Menu()
-                        .Append(("Salir", LogOut));
+                        .Append(("Salir", LogOut)) ?? [];
 
     public static void LogOut(Pizzeria pizzeria)
     {

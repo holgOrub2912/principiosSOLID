@@ -42,8 +42,7 @@ namespace Isas_Pizza {
                     IngredienteEnStock nuevo) item)
                 => inventario.Update(item.viejo, item.nuevo));
 
-            if (_next != null)
-                _next.Handle(orden);
+            _next?.Handle(orden);
         }
 
         public void SetNext(IRequestHandler<Orden> next)
