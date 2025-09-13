@@ -5,18 +5,10 @@ namespace Isas_Pizza
     public static class OrderManager
     {
         public static void UpdateState(Pizzeria pizzeria, EstadoOrden from, EstadoOrden to)
-        {
-            Orden? toUpdate = GetWithState(pizzeria, from);
-            if (toUpdate is null)
-                return;
-
-            pizzeria.ordenes.Update(toUpdate, new Orden {
-                numeroOrden = toUpdate.numeroOrden,
-                productosOrdenados = toUpdate.productosOrdenados,
-                estado = to,
-                ordenadaEn = toUpdate.ordenadaEn
-            });
-        }
+            => HandleWithState(pizzeria,
+                                from,
+                                new OrdenUpdater(pizzeria.ordenes, to)
+                              );
         public static Orden? GetWithState(Pizzeria pizzeria, EstadoOrden targetState)
         {
             IEnumerable<Orden> ordenesListas = pizzeria.ordenes
@@ -35,6 +27,14 @@ namespace Isas_Pizza
                     ), o))
                 .ToList()
             );
+        }
+        public static void HandleWithState(Pizzeria pizzeria, EstadoOrden state, IRequestHandler<Orden> handler)
+        {
+            Orden? orden = GetWithState(pizzeria, state);
+            if (orden is null)
+                return;
+
+            handler.Handle(orden);
         }
     }
 }

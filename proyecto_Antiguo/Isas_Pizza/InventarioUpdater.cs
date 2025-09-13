@@ -9,9 +9,10 @@ namespace Isas_Pizza {
     public class InventarioUpdater
     (
         IPersistenceLayer<IngredienteEnStock> inventario
-    )
+    ) : IRequestHandler<Orden>
     {
-        public void ApplyUpdate(Orden orden)
+        private IRequestHandler<Orden>? _next;
+        public void Handle(Orden orden)
         {
             IEnumerable<IngredienteEnStock> inventarioViejo = inventario
                 .View(null);
@@ -40,6 +41,14 @@ namespace Isas_Pizza {
                 ((IngredienteEnStock viejo,
                     IngredienteEnStock nuevo) item)
                 => inventario.Update(item.viejo, item.nuevo));
+
+            if (_next != null)
+                _next.Handle(orden);
+        }
+
+        public void SetNext(IRequestHandler<Orden> next)
+        {
+            this._next = next;
         }
     }
 }

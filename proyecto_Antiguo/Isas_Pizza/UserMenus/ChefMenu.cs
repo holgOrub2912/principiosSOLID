@@ -16,29 +16,19 @@ namespace Isas_Pizza.UserMenus
         [MenuOption("Cocinar una órden")]
         public static void CocinarOrden(Pizzeria pizzeria)
         {
-            Orden? posibleOrden = OrderManager.GetWithState(pizzeria, EstadoOrden.ORDENADA);
-            if (posibleOrden is null)
-                return;
-            Orden ordenACocinar = posibleOrden;
-
             InventarioUpdater updater = new(pizzeria.inventario);
+            updater.SetNext(
+                new OrdenUpdater(pizzeria.ordenes,
+                                 EstadoOrden.COCINANDO)
+            );
+
             try  {
-                updater.ApplyUpdate(ordenACocinar);
+                OrderManager.HandleWithState(pizzeria, EstadoOrden.ORDENADA, updater);
             } catch (InventarioInsuficienteException e)
             {
                 pizzeria.io.Display([$"Inventario insuficiente: {e.nombreIngrediente}"]);
                 return;
             }
-
-            // Marcar la orden como cocinándose
-            pizzeria.ordenes.Update(ordenACocinar, new Orden
-            {
-                numeroOrden = ordenACocinar.numeroOrden,
-                productosOrdenados = ordenACocinar.productosOrdenados,
-                estado = EstadoOrden.COCINANDO,
-                ordenadaEn = ordenACocinar.ordenadaEn
-            });
-
             pizzeria.io.Display(["Cocinando ..."]);
         }
 
