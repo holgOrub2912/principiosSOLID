@@ -47,15 +47,10 @@ namespace Isas_Pizza.IO
         public Producto Ask(Producto? _)
         {
             Console.Write("Nombre del producto: ");
-            string nombre;
-            do
-                nombre = Console.ReadLine();
-            while (string.IsNullOrEmpty(nombre));
-            double precio;
-            do {
-                Console.Write("Precio del producto: ");
-                precio = primitiveIO.Ask(0.0);
-            } while (precio <= 0.0);
+            string nombre = primitiveIO.Ask("");
+
+            Console.Write("Precio del producto: ");
+            double precio = primitiveIO.Ask(0.0);
 
             double cantidad;
             bool continuar = true;
@@ -68,8 +63,7 @@ namespace Isas_Pizza.IO
                     ingredientes.Select(i => (i.nombre, i)).ToArray()
                 );
                 Console.Write($"Cantidad ({ingrediente.unidad.GetString(false)}): ");
-                while (!double.TryParse(Console.ReadLine(), out cantidad) || cantidad <= 0)
-                    Console.Write("Debe ser un entero positivo\nCantidad: ");
+                cantidad = primitiveIO.Ask(0.0);
                 ingredienteCantidades = ingredienteCantidades.Append(
                     new IngredienteCantidad {
                         ingrediente = ingrediente,
@@ -87,7 +81,7 @@ namespace Isas_Pizza.IO
                 ingredientesRequeridos = ingredienteCantidades.ToArray(),
             };
 
-            List<ValidationResult> resultadosValidacion = new();
+            List<ValidationResult> resultadosValidacion = [];
             if (!Validator
                 .TryValidateObject(producto,
                                    new ValidationContext(producto),

@@ -1,7 +1,11 @@
 
 namespace Isas_Pizza.IO
 {
-    public class PrimitiveIO : IBlockingDisplayer<string>, IBlockingPrompter<int>, IBlockingPrompter<double>
+    public class PrimitiveIO :
+        IBlockingDisplayer<string>,
+        IBlockingPrompter<string>,
+        IBlockingPrompter<int>,
+        IBlockingPrompter<double>
     {
         public void Display(ICollection<string> strings)
         {
@@ -30,6 +34,19 @@ namespace Isas_Pizza.IO
                 Console.WriteLine("Favor escribir una cantidad positiva.");
             }
             return cantidad;
+        }
+
+        public string Ask(string _)
+        {
+            string respuesta = "";
+            while (true)
+            {
+                respuesta = Console.ReadLine();
+                if (!String.IsNullOrEmpty(respuesta)) 
+                    break;
+                Console.Write("Favor escribir un valor: ");
+            }
+            return respuesta;
         }
     }
 }
