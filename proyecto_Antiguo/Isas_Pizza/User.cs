@@ -1,4 +1,5 @@
 using System;
+using Isas_Pizza.UserMenus;
 
 namespace Isas_Pizza
 {
@@ -7,6 +8,17 @@ namespace Isas_Pizza
         CONSUMIDOR,
         ADMINISTRADOR,
         CHEF,
+    }
+
+    public static class UserRoleExtensions
+    {
+        public static UserMenu GetMenu(this UserRole rol)
+            => rol switch
+            {
+                UserRole.CONSUMIDOR => new ConsumidorMenu(),
+                UserRole.ADMINISTRADOR => new AdministradorMenu(),
+                UserRole.CHEF => new ChefMenu(),
+            };
     }
 
     /// <summary>
@@ -19,6 +31,11 @@ namespace Isas_Pizza
         /// </summary>
         /// returns rol del usuario.
         public UserRole GetRole();
+        /// <summary>
+        /// Obtener un menú para este usuario
+        /// </summary>
+        /// returns UserMenu del usuario.
+        public UserMenu GetMenu();
     }
 
     /// <summary>
@@ -27,7 +44,9 @@ namespace Isas_Pizza
     /// </summary>
     public record class RegisteredUser(int id, string passwordHash, UserRole rol) : IUserAgent
     {
+        private UserMenu _menu = rol.GetMenu();
         public UserRole GetRole() => this.rol;
+        public UserMenu GetMenu() => _menu;
     }
 
     /// <summary>
@@ -35,7 +54,9 @@ namespace Isas_Pizza
     /// </summary>
     public record class NonRegisteredUser: IUserAgent
     {
+        private UserMenu _menu = UserRole.CONSUMIDOR.GetMenu();
         public UserRole GetRole() => UserRole.CONSUMIDOR;
+        public UserMenu GetMenu() => _menu;
     }
 
 }

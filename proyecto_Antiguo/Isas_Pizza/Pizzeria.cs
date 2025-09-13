@@ -53,13 +53,9 @@ public class Pizzeria
         this.usuarioActivo = auth.Authenticate(prompter);
     }
     public IEnumerable<(string label, Action<Pizzeria>)> Menu()
-        => (usuarioActivo.GetRole() switch
-        {
-            UserRole.CONSUMIDOR => (new ConsumidorMenu()).Menu(),
-            UserRole.ADMINISTRADOR => (new AdministradorMenu()).Menu(),
-            UserRole.CHEF => (new ChefMenu()).Menu(),
-            _ => throw new NotImplementedException("El menú para este rol no ha sido implementado.")
-        }).Append(("Salir", LogOut));
+        => usuarioActivo.GetMenu()
+                        .Menu()
+                        .Append(("Salir", LogOut));
 
     public static void LogOut(Pizzeria pizzeria)
     {
