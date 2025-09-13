@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace Isas_Pizza
+namespace Isas_Pizza.Models
 {
     /// <summary>
     /// Unidad con la que se mide un ingrediente.

@@ -1,4 +1,5 @@
 using Isas_Pizza;
+using Isas_Pizza.Models;
 using Isas_Pizza.Persistence.EFModel;
 
 namespace Isas_Pizza.Persistence

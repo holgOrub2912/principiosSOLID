@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Isas_Pizza
+namespace Isas_Pizza.Models
 {
     /**
     <summary>

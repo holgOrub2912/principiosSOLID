@@ -1,5 +1,6 @@
 using System.CommandLine;
 using Isas_Pizza.Persistence;
+using Isas_Pizza.Models;
 using Isas_Pizza;
 
 namespace Isas_Pizza.IO
