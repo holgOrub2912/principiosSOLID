@@ -1,11 +1,9 @@
 using Isas_Pizza.Models;
 
 namespace Isas_Pizza {
-    public interface ICounterVisitor<T>
+    public interface ICounterVisitor<TReturn, TVisit>
     {
-        public T Visit(Orden orden);
-        public T Visit(Orden orden, int cantidad);
-        public T Visit(Producto producto, int cantidad);
-        public T Visit(Ingrediente ingrediente, double cantidad);
+        public TReturn Visit(TVisit obj) => Visit(obj, 1);
+        public TReturn Visit(TVisit obj, double cantidad);
     }
 }

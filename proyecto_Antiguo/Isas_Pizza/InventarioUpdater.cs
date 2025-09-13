@@ -21,7 +21,7 @@ namespace Isas_Pizza {
                     ies => ies.cantidad
                 );
 
-            InventarioChecker checker = new(inventarioActualizado);
+            ICounterVisitor<bool, Orden> checker = new InventarioChecker(inventarioActualizado);
             if (!checker.Visit(orden))
                 throw new InventarioInsuficienteException(inventarioActualizado.Single(t => t.Value < 0).Key);
 
