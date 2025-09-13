@@ -40,5 +40,12 @@ namespace Isas_Pizza.UserMenus
             else
                 pizzeria.inventario.Save([pizzeria.io.Ask(ingrediente)]);
         }
+
+        [MenuOption("Agregar producto")]
+        public static void AgregarProducto(Pizzeria pizzeria)
+        {
+            Producto producto = pizzeria.io.AskProducto();
+            pizzeria.menu.Save([producto]);
+        }
     }
 }
