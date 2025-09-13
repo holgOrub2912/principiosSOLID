@@ -109,7 +109,7 @@ namespace Isas_Pizza.Persistence
     public class EFPersistenceLayer :
         IROPersistenceLayer<Ingrediente>,
         IPersistenceLayer<IngredienteEnStock>,
-        IROPersistenceLayer<Producto>,
+        IPersistenceLayer<Producto>,
         IPersistenceLayer<Orden>
     {
         /// <summary>
@@ -178,6 +178,7 @@ namespace Isas_Pizza.Persistence
 
         public IEnumerable<Ingrediente> View(Ingrediente? _)
             => (IEnumerable<Ingrediente>) this._context.Ingredientes
+                .AsNoTracking()
                 .ToList()
                 .Select(ing => ing.Export());
 
@@ -230,6 +231,48 @@ namespace Isas_Pizza.Persistence
                 .ToList()
                 .Select(p => p.Export());
 
+        public void Save(IEnumerable<Producto> productos)
+        {
+            IEnumerable<EFProducto> efProductos = productos
+                .Select(p => new EFProducto(p, this._context));
+
+            foreach (EFIngrediente ing in
+                efProductos.SelectMany(p => p.IngredientesRequeridos,
+                                      (p, ingreq) => ingreq.Ingrediente)
+                    )
+                this._context.Entry(ing).State = EntityState.Unchanged;
+
+            this._context.AddRange(efProductos);
+            this._context.SaveChanges();
+        }
+
+        public void Delete(Producto producto)
+        {
+            EFProducto efProducto = this._context.Productos
+                .Single(p => p.Nombre == producto.nombre);
+            this._context.Productos.Remove(efProducto);
+            this._context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Actualizar producto
+        /// </summary>
+        /// <param name="source">Producto original</param>
+        /// <param name="target">Producto actualizado</param>
+        /// \todo Ver si nombre del producto se deja cambiar o no
+        public void Update(Producto source, Producto target)
+        {
+            EFProducto efProducto = this._context.Productos
+                .Single(p => p.Nombre == source.nombre);
+
+            // efProducto.Nombre = target.nombre;
+            efProducto.Precio = target.precio;
+            efProducto.IngredientesRequeridos = target.ingredientesRequeridos
+                .Select(ing => new EFIngredienteCantidad(ing))
+                .ToArray();
+            this._context.SaveChanges();
+        }
+
         public IEnumerable<Orden> View(Orden? _)
         {
             return this._context.Ordenes
@@ -265,5 +308,6 @@ namespace Isas_Pizza.Persistence
             this._context.Ordenes.Remove(efOrden);
             this._context.SaveChanges();
         }
+
     }
 }

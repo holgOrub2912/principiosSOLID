@@ -1,7 +1,7 @@
 
 namespace Isas_Pizza.IO
 {
-    class PrimitiveIO : IBlockingDisplayer<string>, IBlockingPrompter<int>, IBlockingPrompter<double>
+    public class PrimitiveIO : IBlockingDisplayer<string>, IBlockingPrompter<int>, IBlockingPrompter<double>
     {
         public void Display(ICollection<string> strings)
         {

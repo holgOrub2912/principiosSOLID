@@ -144,7 +144,7 @@ namespace Isas_Pizza.Persistence.EFModel
             this.Cantidad = ingredienteCantidad.cantidad;
         }
 
-        public EFIngredienteCantidad(IngredienteEnStock ingredienteCantidad,
+        public EFIngredienteCantidad(IngredienteCantidad ingredienteCantidad,
                                     EFContext ctx)
             : this(ingredienteCantidad)
         {
@@ -166,6 +166,22 @@ namespace Isas_Pizza.Persistence.EFModel
         /// preparado.</summary>
         public ICollection<EFIngredienteCantidad> IngredientesRequeridos { get; set; }
             = new List<EFIngredienteCantidad>();
+
+        public EFProducto(){}
+        public EFProducto(Producto producto)
+        {
+            Nombre = producto.nombre;
+            Precio = producto.precio;
+            IngredientesRequeridos = producto.ingredientesRequeridos
+                .Select(ing => new EFIngredienteCantidad(ing)).ToArray();
+        }
+        public EFProducto(Producto producto, EFContext ctx)
+        {
+            Nombre = producto.nombre;
+            Precio = producto.precio;
+            IngredientesRequeridos = producto.ingredientesRequeridos
+                .Select(ing => new EFIngredienteCantidad(ing, ctx)).ToArray();
+        }
 
         /// <summary>Convertir a Producto</summary>
         public Producto Export() => new Producto

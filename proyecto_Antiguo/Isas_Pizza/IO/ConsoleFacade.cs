@@ -13,10 +13,14 @@ namespace Isas_Pizza.IO {
         public ConsoleFacade(Pizzeria pizzeria)
         {
             credentialPrompter = new();
-            productoIO = new();
             primitiveIO = new();
             ingredienteIO = new(pizzeria.ingredientes.View(null));
             menuGenericoIO = new();
+            productoIO = new(
+                pizzeria.ingredientes.View(null),
+                primitiveIO,
+                menuGenericoIO
+            );
             ordenIO = new(
                 menuGenericoIO,
                 () => pizzeria.menu.View(null)
@@ -44,10 +48,13 @@ namespace Isas_Pizza.IO {
 
         void IBlockingDisplayer<Producto>.Display(ICollection<Producto> elements)
             => productoIO.Display(elements);
+        public Producto Ask(Producto? _)
+            => productoIO.Ask((Producto?) null);
+
         public T SelectOne<T>(string title, ICollection<(string label, T option)> options)
             => menuGenericoIO.SelectOne<T>(title, options);
-
         public T SelectOne<T>(ICollection<(string label, T option)> options)
             => menuGenericoIO.SelectOne<T>(options);
+
     }
 }

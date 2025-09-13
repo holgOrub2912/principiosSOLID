@@ -65,6 +65,7 @@ namespace Isas_Pizza.IO
         IBlockingSelector,
         IBlockingPrompter<LoginCredentials?>,
         IBlockingPrompter<Orden>,
+        IBlockingPrompter<Producto>,
         IIngEnStockPrompter,
         IBlockingDisplayer<string>,
         IBlockingDisplayer<Orden>,
@@ -72,5 +73,6 @@ namespace Isas_Pizza.IO
         IBlockingDisplayer<Producto>
     {
         public Orden AskOrden() => Ask((Orden?) null);
+        public Producto AskProducto() => Ask((Producto?) null);
     } 
 }
