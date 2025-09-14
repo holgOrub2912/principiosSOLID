@@ -11,6 +11,8 @@ using System.ComponentModel;
 using Microsoft.Extensions.Options;
 using System.CommandLine;
 using System.Globalization;
+using System.Net;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Isas_Pizza.Persistence
 {
@@ -66,6 +68,12 @@ namespace Isas_Pizza.Persistence
     /// </summary>
     public class EFContextFactory : IDesignTimeDbContextFactory<EFContext>
     {
+        private IDictionary<string, string> _dbOptions;
+        public EFContextFactory(){}
+        public EFContextFactory(IDictionary<string, string> dbOptions)
+        {
+            this._dbOptions = dbOptions;
+        }
         public EFContext CreateDbContext(string[] args)
         {
             DbContextOptionsBuilder<EFContext> optionsBuilder = new();
@@ -95,15 +103,17 @@ namespace Isas_Pizza.Persistence
             };
             ParseResult parseResult = rootCommand.Parse(args);
 
-            Dictionary<string, string> dbOptions = new Dictionary<string, string>
+            _dbOptions = new Dictionary<string, string>
             {
                 { "Host", parseResult.GetValue(server) },
                 { "Username", parseResult.GetValue(user) },
                 { "Database", parseResult.GetValue(database) },
                 { "Password", parseResult.GetValue(password) },
             };
-            return new EFContext(dbOptions);
+            return new EFContext(_dbOptions);
         }
+        public EFContext CreateDbContext()
+            => new EFContext(_dbOptions);
     }
 
     public class EFPersistenceLayer :
@@ -115,7 +125,8 @@ namespace Isas_Pizza.Persistence
         /// <summary>
         /// Contexto de conexión a la base de datos
         /// </summary>
-        private EFContext _context;
+        private EFContextFactory _contextFactory;
+        private EFContext? _temporaryContext;
 
         public static EFPersistenceLayer Instance { get; private set; }
 
@@ -130,15 +141,16 @@ namespace Isas_Pizza.Persistence
 
         private EFPersistenceLayer(IDictionary<string,string> dbOptions)
         {
-            this._context = new EFContext(dbOptions);
+            this._contextFactory = new EFContextFactory(dbOptions);
+            EFContext context = this._contextFactory.CreateDbContext();
             // Verificar la integridad de la base de datos
             try {
-                this._context.Ingredientes.FirstOrDefault();
-                this._context.IngredientesCantidad.FirstOrDefault();
-                this._context.IngredientesEnStock.FirstOrDefault();
-                this._context.Productos.FirstOrDefault();
-                this._context.ProductosOrdenes.FirstOrDefault();
-                this._context.Ordenes.FirstOrDefault();
+                context.Ingredientes.FirstOrDefault();
+                context.IngredientesCantidad.FirstOrDefault();
+                context.IngredientesEnStock.FirstOrDefault();
+                context.Productos.FirstOrDefault();
+                context.ProductosOrdenes.FirstOrDefault();
+                context.Ordenes.FirstOrDefault();
             } catch {
                 throw new PersistenceException($"Al leer la base de datos seleccionada.");
             }
@@ -149,42 +161,63 @@ namespace Isas_Pizza.Persistence
         /// </summary>
         public void initData(bool fromScratch)
         {
-            ICollection<EFIngrediente> ingredientes = this._context.Ingredientes.ToList();
+            using EFContext context = this._contextFactory.CreateDbContext();
+            ICollection<EFIngrediente> ingredientes = context.Ingredientes.ToList();
             if (fromScratch || ingredientes.Count > 0)
             {
-                this._context.Ingredientes.RemoveRange(ingredientes);
+                context.Ingredientes.RemoveRange(ingredientes);
             }
-            ICollection<EFProducto> productos = this._context.Productos.ToList();
+            ICollection<EFProducto> productos = context.Productos.ToList();
             if (fromScratch || productos.Count > 0)
             {
-                this._context.Productos.RemoveRange(productos);
+                context.Productos.RemoveRange(productos);
             }
-            ICollection<EFOrden> ordenes = this._context.Ordenes.ToList();
+            ICollection<EFOrden> ordenes = context.Ordenes.ToList();
             if (fromScratch || ordenes.Count > 0)
             {
-                this._context.Ordenes.RemoveRange(ordenes);
+                context.Ordenes.RemoveRange(ordenes);
             }
-            ICollection<EFIngredienteEnStock> stock = this._context.IngredientesEnStock.ToList();
+            ICollection<EFIngredienteEnStock> stock = context.IngredientesEnStock.ToList();
             if (fromScratch || ordenes.Count > 0)
             {
-                this._context.IngredientesEnStock.RemoveRange(stock);
+                context.IngredientesEnStock.RemoveRange(stock);
             }
-            this._context.SaveChanges();
-            this._context.Ingredientes.AddRange(InitData.ingredientes);
-            this._context.Productos.AddRange(InitData.productos);
-            this._context.IngredientesEnStock.AddRange(InitData.existencias);
-            this._context.SaveChanges();
+            context.SaveChanges();
+            context.Ingredientes.AddRange(InitData.ingredientes);
+            context.Productos.AddRange(InitData.productos);
+            context.IngredientesEnStock.AddRange(InitData.existencias);
+            context.SaveChanges();
+        }
+
+        private EFContext GetContext()
+            => this._temporaryContext ?? this._contextFactory.CreateDbContext();
+        public void BeginTransaction()
+        {
+            this._temporaryContext = this._contextFactory.CreateDbContext();
+            this._temporaryContext.Database.BeginTransaction();
+        }
+        public void Clear()
+        {
+            if (this._temporaryContext is null)
+                return;
+            this._temporaryContext.Database.RollbackTransaction();
+            this._temporaryContext.ChangeTracker.Clear();
+            this._temporaryContext = null;
         }
 
         public IEnumerable<Ingrediente> View(Ingrediente? _)
-            => (IEnumerable<Ingrediente>) this._context.Ingredientes
+        {
+            EFContext context = GetContext();
+            return (IEnumerable<Ingrediente>) context.Ingredientes
                 .AsNoTracking()
                 .ToList()
                 .Select(ing => ing.Export());
 
+        }
         public IEnumerable<IngredienteEnStock> View(IngredienteEnStock? _)
         {
-            return (IEnumerable<IngredienteEnStock>)this._context.IngredientesEnStock
+            EFContext context = GetContext();
+            return (IEnumerable<IngredienteEnStock>) context.IngredientesEnStock
                 .AsNoTracking()
                 .Include(ies => ies.Ingrediente) 
                 .ToList()
@@ -193,66 +226,75 @@ namespace Isas_Pizza.Persistence
 
         public void Save(IEnumerable<IngredienteEnStock> ingredientesES)
         {
+            EFContext context = GetContext();
             IEnumerable<EFIngredienteEnStock> ingsES
                 = ingredientesES.Select(
-                    ing => new EFIngredienteEnStock(ing, this._context)
+                    ing => new EFIngredienteEnStock(ing, context)
                 );
             
-            this._context.AddRange(ingsES);
+            context.AddRange(ingsES);
             // Save on a shallow fashion
             // Do not create the underlying Ingrediente
             foreach (EFIngredienteEnStock ingES in ingsES)
-                this._context.Entry(ingES.Ingrediente).State = EntityState.Unchanged;
-            this._context.SaveChanges();
+                context.Entry(ingES.Ingrediente).State = EntityState.Unchanged;
+            context.SaveChanges();
         }
 
-        private EFIngredienteEnStock RetrieveIES(IngredienteEnStock source)
-            => this._context.IngredientesEnStock.Single(ies =>
+        private EFIngredienteEnStock RetrieveIES(IngredienteEnStock source, EFContext context)
+            => context.IngredientesEnStock.Single(ies =>
                 ies.IngredienteNombre== source.ingrediente.nombre);
 
         public void Update(IngredienteEnStock source, IngredienteEnStock target)
         {
-            EFIngredienteEnStock ingES = this.RetrieveIES(source);
+            EFContext context = GetContext();
+            EFIngredienteEnStock ingES = this.RetrieveIES(source, context);
             ingES.Cantidad = target.cantidad;
             ingES.FechaVencimiento = target.fechaVencimiento;
-            this._context.SaveChanges();
+            context.SaveChanges();
         }
 
         public void Delete(IngredienteEnStock target)
         {
-            EFIngredienteEnStock ingES = this.RetrieveIES(target);
-            this._context.IngredientesEnStock.Remove(ingES);
-            this._context.SaveChanges();
+            EFContext context = GetContext();
+            EFIngredienteEnStock ingES = this.RetrieveIES(target, context);
+            context.IngredientesEnStock.Remove(ingES);
+            context.SaveChanges();
         }
 
         public IEnumerable<Producto> View(Producto? _)
-            => (IEnumerable<Producto>) this._context.Productos
+        {
+            EFContext context = GetContext();
+            
+            return (IEnumerable<Producto>) context.Productos
                 .Include(p => p.IngredientesRequeridos)
                 .ThenInclude(ingreq => ingreq.Ingrediente)
                 .ToList()
                 .Select(p => p.Export());
+        }
 
         public void Save(IEnumerable<Producto> productos)
         {
+            EFContext context = GetContext();
             IEnumerable<EFProducto> efProductos = productos
-                .Select(p => new EFProducto(p, this._context));
+                .Select(p => new EFProducto(p, context));
 
             foreach (EFIngrediente ing in
                 efProductos.SelectMany(p => p.IngredientesRequeridos,
                                       (p, ingreq) => ingreq.Ingrediente)
                     )
-                this._context.Entry(ing).State = EntityState.Unchanged;
+                context.Entry(ing).State = EntityState.Unchanged;
 
-            this._context.AddRange(efProductos);
-            this._context.SaveChanges();
+            context.AddRange(efProductos);
+            context.SaveChanges();
         }
 
         public void Delete(Producto producto)
         {
-            EFProducto efProducto = this._context.Productos
+            EFContext context = GetContext();
+            EFProducto efProducto = context.Productos
                 .Single(p => p.Nombre == producto.nombre);
-            this._context.Productos.Remove(efProducto);
-            this._context.SaveChanges();
+            context.Productos.Remove(efProducto);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -263,7 +305,8 @@ namespace Isas_Pizza.Persistence
         /// \todo Ver si nombre del producto se deja cambiar o no
         public void Update(Producto source, Producto target)
         {
-            EFProducto efProducto = this._context.Productos
+            EFContext context = GetContext();
+            EFProducto efProducto = context.Productos
                 .Single(p => p.Nombre == source.nombre);
 
             // efProducto.Nombre = target.nombre;
@@ -271,12 +314,12 @@ namespace Isas_Pizza.Persistence
             efProducto.IngredientesRequeridos = target.ingredientesRequeridos
                 .Select(ing => new EFIngredienteCantidad(ing))
                 .ToArray();
-            this._context.SaveChanges();
+            context.SaveChanges();
         }
 
         public IEnumerable<Orden> View(Orden? _)
         {
-            return this._context.Ordenes
+            return GetContext().Ordenes
                 .AsNoTracking()
                 .Include(o => o.ProductosOrdenados)
                 .ThenInclude(po => po.Producto)
@@ -287,27 +330,30 @@ namespace Isas_Pizza.Persistence
         
         public void Save(IEnumerable<Orden> ordenes)
         {
+            EFContext context = GetContext();
             IEnumerable<EFOrden> efOrdenes = ordenes
-                .Select(o => new EFOrden(o, this._context));
+                .Select(o => new EFOrden(o, context));
 
-            this._context.AddRange(efOrdenes);
-            this._context.SaveChanges();
+            context.AddRange(efOrdenes);
+            context.SaveChanges();
         }
 
-        private EFOrden RetrieveEFOrden(Orden source)
-            => this._context.Ordenes
+        private EFOrden RetrieveEFOrden(Orden source, EFContext context)
+            => context.Ordenes
                 .Single(o => o.NumeroOrden == source.numeroOrden);
         public void Update(Orden source, Orden target)
         {
-            EFOrden efOrden = RetrieveEFOrden(source);
+            EFContext context = GetContext();
+            EFOrden efOrden = RetrieveEFOrden(source, context);
             efOrden.Estado = target.estado;
-            this._context.SaveChanges();
+            context.SaveChanges();
         }
         public void Delete(Orden orden)
         {
-            EFOrden efOrden = RetrieveEFOrden(orden);
-            this._context.Ordenes.Remove(efOrden);
-            this._context.SaveChanges();
+            EFContext context = GetContext();
+            EFOrden efOrden = RetrieveEFOrden(orden, context);
+            context.Ordenes.Remove(efOrden);
+            context.SaveChanges();
         }
 
     }
