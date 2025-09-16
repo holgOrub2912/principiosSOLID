@@ -79,7 +79,7 @@ namespace Isas_Pizza.IO
                 fecha = ies.fechaVencimiento;
                 Console.WriteLine($"Fecha futura (mm/dd/aaaa) [vacio para ({fecha.ToShortDateString()})]: ");
                 input = Console.ReadLine();
-                if (string.IsNullOrEmpty(input))
+                if (fecha > DateTime.Today && string.IsNullOrEmpty(input))
                     break;
             } while (!DateTime.TryParse(input, out fecha) || fecha <= DateTime.Today);
 
