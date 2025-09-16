@@ -19,7 +19,8 @@ namespace Isas_Pizza.IO {
             productoIO = new(
                 pizzeria.ingredientes.View(null),
                 primitiveIO,
-                menuGenericoIO
+                menuGenericoIO,
+                () => pizzeria.menu.View(null)
             );
             ordenIO = new(
                 menuGenericoIO,

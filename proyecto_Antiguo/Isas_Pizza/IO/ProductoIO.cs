@@ -11,7 +11,8 @@ namespace Isas_Pizza.IO
     public class ProductoIO(
         IEnumerable<Ingrediente> ingredientes,
         PrimitiveIO primitiveIO,
-        IBlockingSelector menuGenerico
+        IBlockingSelector menuGenerico,
+        Func<IEnumerable<Producto>> productosGen
     ): IBlockingDisplayer<Producto>
     {
         
@@ -47,8 +48,17 @@ namespace Isas_Pizza.IO
 
         public Producto Ask(Producto? _)
         {
+            IEnumerable<Producto> productos = productosGen();
             Console.Write("Nombre del producto: ");
             string nombre = primitiveIO.Ask("");
+
+            // Verificar que este producto no exista ya
+            while (productos.Any(p => p.nombre == nombre))
+            {
+                Console.WriteLine("Ya hay un producto con ese nombre.");
+                Console.Write("Nombre del producto: ");
+                nombre = primitiveIO.Ask("");
+            }
 
             Console.Write("Precio del producto: ");
             double precio = primitiveIO.Ask(0.0);
